@@ -1,0 +1,218 @@
+body {
+  overflow-x: hidden;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home {
+  min-height: calc(100vh - 80px);
+  background-color: var(--bg-color);
+}
+
+/* --- Banner Slider --- */
+.banner-slider {
+  position: relative;
+  height: 340px;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 0.1rem;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+.slide-content {
+  text-align: center;
+  color: white;
+  z-index: 2;
+}
+
+.slide-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.slide-content p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* --- Professional Banner Button --- */
+.banner-btn {
+  padding: 10px 25px;
+  font-size: 0.9rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.banner-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.slider-dots {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer;
+}
+
+.dot.active {
+  background: white;
+  width: 25px;
+  border-radius: 10px;
+}
+
+/* --- Category Section --- */
+.categories-section {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.categories-section h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1.5rem;
+}
+
+.category-card {
+  background: var(--card-bg);
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--card-border);
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+}
+
+.category-card.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* --- Product Section --- */
+.products-grid-home {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.product-card-home {
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  transition: all 0.3s ease;
+}
+
+.product-card-home:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.product-image-home {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.product-image-home img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+.product-info-home {
+  padding: 1.2rem;
+  color: var(--text-color);
+}
+
+.product-info-home h3 {
+  color: var(--text-color);
+}
+
+.product-price-home {
+  color: #27ae60; /* Professional Green */
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* --- Professional Add to Cart Button --- */
+.add-to-cart-btn-home {
+  width: 100%;
+  padding: 12px;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.add-to-cart-btn-home:hover {
+  background-color: #34495e;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .banner-slider { height: 200px; }
+  .products-grid-home { grid-template-columns: repeat(2, 1fr); }
+}

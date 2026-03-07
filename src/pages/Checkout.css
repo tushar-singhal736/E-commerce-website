@@ -1,0 +1,201 @@
+.checkout-page {
+  min-height: 100vh;
+  background: linear-gradient(120deg,#f5f7fa,#e8eef5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 15px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* MAIN CARD */
+
+.checkout-container {
+
+  width: 100%;
+  max-width: 650px;
+
+  background: #ffffff;
+
+  padding: 35px;
+
+  border-radius: 14px;
+
+  box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+
+  transition: all .25s ease;
+}
+
+.checkout-container:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+/* TITLE */
+
+.checkout-container h1 {
+
+  text-align: center;
+
+  margin-bottom: 30px;
+
+  font-size: 28px;
+
+  font-weight: 700;
+
+  color: #333;
+
+  border-bottom: 2px solid #f0f0f0;
+
+  padding-bottom: 12px;
+}
+
+/* FORM */
+
+.checkout-form{
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+/* INPUTS */
+
+.checkout-form input,
+.checkout-form textarea{
+
+  width: 100%;
+
+  padding: 13px 15px;
+
+  margin-bottom: 15px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  background: #fafafa;
+
+  transition: all .25s ease;
+}
+
+.checkout-form input:focus,
+.checkout-form textarea:focus{
+
+  outline: none;
+
+  border-color: #ff9900;
+
+  background: #fff;
+
+  box-shadow: 0 0 6px rgba(255,153,0,.25);
+}
+
+/* TEXTAREA */
+
+.checkout-form textarea{
+
+  min-height: 90px;
+
+  resize: vertical;
+}
+
+/* GRID ROW */
+
+.form-row{
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+/* BUTTON */
+
+.checkout-form button{
+
+  margin-top: 15px;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  font-size: 17px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  color: white;
+
+  background: linear-gradient(135deg,#ff9900,#ffb700);
+
+  transition: all .25s ease;
+}
+
+.checkout-form button:hover{
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 18px rgba(255,153,0,.35);
+}
+
+.checkout-form button:active{
+
+  transform: translateY(0);
+}
+
+/* MOBILE */
+
+@media (max-width:768px){
+
+.checkout-container{
+
+padding:25px;
+
+}
+
+}
+
+@media (max-width:480px){
+
+.checkout-page{
+
+padding:20px 10px;
+
+}
+
+.checkout-container{
+
+padding:20px;
+
+border-radius:10px;
+
+}
+
+.checkout-container h1{
+
+font-size:24px;
+
+}
+
+.form-row{
+
+grid-template-columns:1fr;
+
+}
+
+.checkout-form button{
+
+font-size:16px;
+
+padding:13px;
+
+}
+
+}

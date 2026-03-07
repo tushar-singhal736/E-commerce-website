@@ -1,0 +1,265 @@
+[
+  {
+    "id": 1,
+    "name": "Women's Summer Dress",
+    "price": 199,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800"
+    ],
+    "description": "Beautiful summer dress for women",
+    "rating": 4.7,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 2,
+    "name": "Women's Handbag",    
+    "price": 249,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+    ],
+    "description": "Elegant leather handbag",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 3,
+    "name": "Women's Jeans",
+    "price": 189,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+    ],
+    "description": "Comfortable fit jeans",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 4,
+    "name": "Women's Trowsers",
+    "price": 129,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"
+    ],
+    "description": "Stylish trowsers for office",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 5,
+    "name": "Men's T-Shirt",
+    "price": 99,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+    ],
+    "description": "Classic cotton t-shirt",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 6,
+    "name": "Men's Jeans",
+    "price": 299,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+    ],
+    "description": "Slim fit denim jeans",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 7,
+    "name": "Men's Jacket",
+    "price": 299,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800"
+    ],
+    "description": "Warm winter jacket",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 8,
+    "name": "Men's Shirt",
+    "price": 149,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1603252109303-2751441dd157?w=800"
+    ],
+    "description": "Formal dress shirt",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 9,
+    "name": "Running Shoes",
+    "price": 499,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800"
+    ],
+    "description": "Comfortable running shoes",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 10,
+    "name": "Casual Sneakers",
+    "price": 499,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800"
+    ],
+    "description": "Stylish casual sneakers",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 11,
+    "name": "High Heels",
+    "price": 799,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+    ],
+    "description": "Elegant high heel shoes",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 12,
+    "name": "Boots",
+    "price": 399,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1605812860427-4024433a70fd?w=800"
+    ],
+    "description": "Leather boots",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 13,
+    "name": "Gold Necklace",
+    "price": 899,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800"
+    ],
+    "description": "Beautiful gold necklace",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 14,
+    "name": "Silver Ring",
+    "price": 149,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800"
+    ],
+    "description": "Elegant silver ring",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 15,
+    "name": "Diamond Earrings",
+    "price": 999,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=800"
+    ],
+    "description": "Sparkling diamond earrings",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 16,
+    "name": "Bracelet",
+    "price": 129,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800"
+    ],
+    "description": "Charming bracelet",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 17,
+    "name": "Wireless Headphones",
+    "price": 449,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800"
+    ],
+    "description": "Premium wireless headphones",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 18,
+    "name": "Smart Watch",
+    "price": 799,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800"
+    ],
+    "description": "Feature-rich smartwatch",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 19,
+    "name": "Bluetooth Speaker",
+    "price": 249,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800"
+    ],
+    "description": "Portable Bluetooth speaker",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 20,
+    "name": "Phone Case",
+    "price": 499,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=800"
+    ],
+    "description": "Protective phone case",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  }
+]
+
+
+

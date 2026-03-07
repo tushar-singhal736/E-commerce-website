@@ -1,0 +1,315 @@
+.orders-page {
+  background: #f4f6f8;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.orders-container {
+  max-width: 850px;
+  margin: auto;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #1e293b;
+}
+
+/* CARD */
+
+.order-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: .25s;
+}
+
+.order-card:hover {
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.order-card.active {
+  border-color: #3b82f6;
+}
+
+/* HEADER */
+
+.order-summary-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.order-no {
+  font-weight: 700;
+  font-size: 16px;
+  display: block;
+}
+
+.order-date {
+  font-size: 13px;
+  opacity: .6;
+}
+
+.status-badge {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-badge.processing {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.delivered {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* TRACKING */
+
+.tracking-section {
+  padding: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.tracking-section h4 {
+  font-size: 14px;
+  margin-bottom: 18px;
+  opacity: .7;
+}
+
+.stepper-container {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.stepper-container::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  background: #e2e8f0;
+  z-index: 1;
+}
+
+.step-item {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.step-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  margin: auto;
+  border: 4px solid white;
+}
+
+.step-item.completed .step-dot {
+  background: #10b981;
+}
+
+.step-item.active .step-dot {
+  background: #3b82f6;
+  box-shadow: 0 0 0 4px #dbeafe;
+}
+
+.step-item p {
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* ITEMS */
+
+.items-list {
+  padding: 20px;
+  background: #fafafa;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.product-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.item-meta {
+  font-size: 13px;
+  opacity: .6;
+}
+
+.item-total {
+  font-weight: 600;
+}
+
+/* FOOTER */
+
+.order-footer-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.discount-value {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.action-area {
+  display: flex;
+  gap: 10px;
+}
+
+/* BUTTONS */
+
+.btn-secondary,
+.btn-danger,
+.btn-outline {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #0f172a;
+  color: #fff;
+}
+
+.btn-danger {
+  background: #fff;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.btn-danger:hover {
+  background: #fee2e2;
+}
+
+.btn-outline {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-outline:hover {
+  background: #f1f5f9;
+}
+
+/* MODAL */
+
+.modal-overlay {
+  position: fixed;
+ 
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px;
+}
+
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.modal-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-confirm {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+}
+
+/* MOBILE */
+
+@media (max-width:768px){
+
+.order-summary-header{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.status-group{
+margin-top:10px;
+}
+
+.item-row{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.order-footer-grid{
+flex-direction:column;
+align-items:flex-start;
+gap:15px;
+}
+
+.stepper-container{
+flex-direction:column;
+gap:12px;
+}
+
+.stepper-container::before{
+display:none;
+}
+
+}

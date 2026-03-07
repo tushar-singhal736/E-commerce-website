@@ -1,0 +1,132 @@
+:root {
+  --bg-color: #f4f7f6;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --text-color: #2d3748;
+}
+
+.order-success-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--bg-color);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.order-success-card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-id {
+  margin: 0.75rem 0 1rem 0;
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.order-summary {
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.order-summary p {
+  margin: 0.35rem 0;
+  color: var(--text-color);
+}
+
+.items-list {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.items-list h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.item-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed var(--card-border);
+}
+
+.item-row img { 
+  width: 50px; 
+  height: 50px; 
+  object-fit: cover; 
+  border-radius: 6px; 
+  background: #eee;
+}
+
+.item-row .name { 
+  font-weight: 600; 
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.item-row .qty { 
+  color: #718096; 
+  font-size: 0.85rem; 
+}
+
+.more { 
+  padding: 0.75rem 0; 
+  color: #718096; 
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.actions { 
+  margin-top: 2rem; 
+  display: flex; 
+  gap: 1rem; 
+  justify-content: center; 
+}
+
+.actions button { 
+  padding: 0.8rem 1.5rem; 
+  border-radius: 8px; 
+  border: 1px solid #ddd; 
+  background: white; 
+  cursor: pointer; 
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.actions .primary { 
+  background: linear-gradient(90deg, #ff9900, #ffb700); 
+  color: white; 
+  border: none; 
+}
+
+.actions .primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
+}
+
+.secondary-btn {
+  background: #edf2f7 !important;
+  color: #4a5568 !important;
+}
+
+@media (max-width: 640px) {
+  .order-success-card { padding: 1.5rem; }
+  .actions { flex-direction: column; }
+}

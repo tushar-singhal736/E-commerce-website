@@ -1,0 +1,144 @@
+.footer {
+  background-color: var(--secondary-color);
+  color: var(--nav-text);
+  padding: 2.5rem 0 0 0;
+  margin-top: 0;
+  border-top: 4px solid var(--primary-color);
+  width: 100%;
+  position: relative;
+  z-index: 10;
+  
+  /* ⚡ Yeh niche ki khali jagah ko khatam karega */
+  margin-bottom: 0 !important;
+  display: block; 
+  clear: both;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2.5rem;
+}
+
+.footer-section h2.footer-logo {
+  color: #3498db;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+.footer-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.footer-section h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 2px;
+  background-color: #3498db;
+}
+
+.footer-section p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #bdc3c7;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.contact-link {
+  color: #bdc3c7;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+  color: #3498db;
+  text-decoration: underline;
+}
+
+.footer-icon {
+  color: #3498db;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-section ul li a {
+  color: #ecf0f1;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-section ul li a:hover {
+  color: #3498db;
+  padding-left: 8px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 20px;
+  margin-top: 1.5rem;
+}
+
+.social-icons a {
+  color: white;
+  font-size: 1.6rem;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: #3498db;
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1.5rem 0;
+  background-color: rgba(0, 0, 0, 0.3); /* Shade thoda dark kiya hai anchor lock ke liye */
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.85rem;
+  color: #bdc3c7;
+  
+  /* ⚡ Sabse important: Footer ke baad 1px bhi scroll na ho */
+  margin-bottom: 0 !important;
+  position: relative;
+}
+
+.footer-bottom strong {
+  color: #3498db;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .footer-container {
+    text-align: center;
+  }
+  .footer-section h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .social-icons, .footer-section p {
+    justify-content: center;
+  }
+}
+
