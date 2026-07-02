@@ -1,0 +1,1798 @@
+[
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner ",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 1,
+        "name": "Women's Summer Dress",
+        "price": 199,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 199,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 249
+    },
+    "status": "Cancelled",
+    "createdAt": "2026-02-27T11:29:32.779Z",
+    "orderId": "ORD-1772191772828",
+    "orderDate": "27/2/2026, 4:59:32 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 249,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 299
+    },
+    "status": "Delivered",
+    "createdAt": "2026-02-28T04:20:08.548Z",
+    "orderId": "ORD-1772252408608",
+    "orderDate": "28/2/2026, 9:50:08 am"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 14,
+        "name": "Silver Ring",
+        "price": 149,
+        "quantity": 4,
+        "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 596,
+      "shipping": 50,
+      "discount": 29.8,
+      "totalPayable": 616.2
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-02T13:14:27.169Z",
+    "orderId": "ORD-1772457267245",
+    "orderDate": "2/3/2026, 6:44:27 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 249,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 299
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T05:03:41.079Z",
+    "orderId": "ORD-1772773421136",
+    "orderDate": "6/3/2026, 10:33:41 am"
+  },
+  {
+    "customer": {
+      "fullName": "wgdjejdled",
+      "email": "singhalt931@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 189,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 189,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 239
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T05:05:16.047Z",
+    "orderId": "ORD-1772773516054",
+    "orderDate": "6/3/2026, 10:35:16 am"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 9,
+        "name": "Running Shoes",
+        "price": 499,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 499,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 549
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T17:26:38.813Z",
+    "orderId": "ORD-1772817998883",
+    "orderDate": "6/3/2026, 10:56:38 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 15,
+        "name": "Diamond Earrings",
+        "price": 999,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 999,
+      "shipping": 50,
+      "discount": 49.95,
+      "totalPayable": 999.05
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T17:46:27.567Z",
+    "orderId": "ORD-1772819187574",
+    "orderDate": "6/3/2026, 11:16:27 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "+917455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 249,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 299
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T17:51:34.281Z",
+    "orderId": "ORD-1772819494291",
+    "orderDate": "6/3/2026, 11:21:34 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "+917455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 10,
+        "name": "Casual Sneakers",
+        "price": 499,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 499,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 549
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T17:52:11.612Z",
+    "orderId": "ORD-1772819531620",
+    "orderDate": "6/3/2026, 11:22:11 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "+917455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 189,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 189,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 239
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T18:18:50.896Z",
+    "orderId": "ORD-1772821130908",
+    "orderDate": "6/3/2026, 11:48:50 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "07455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 189,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 189,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 239
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T18:21:59.579Z",
+    "orderId": "ORD-1772821319588",
+    "orderDate": "6/3/2026, 11:51:59 pm"
+  },
+  {
+    "orderId": "ORD-1772822776093",
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "07455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 249,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 299
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T18:46:16.077Z",
+    "orderDate": "7/3/2026, 12:16:16 am"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "+917455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 249,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 299
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T18:52:14.388Z",
+    "orderId": "ORD-1772823134397",
+    "orderDate": "7/3/2026, 12:22:14 am"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "+917455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 1,
+        "name": "Women's Summer Dress",
+        "price": 199,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 199,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 249
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T18:53:45.359Z",
+    "orderId": "ORD-1772823225367",
+    "orderDate": "7/3/2026, 12:23:45 am"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 19,
+        "name": "Bluetooth Speaker",
+        "price": 249,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800"
+      }
+    ],
+    "summary": {
+      "subtotal": 249,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 299
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-06T18:59:04.444Z",
+    "orderId": "ORD-1772823544510",
+    "orderDate": "7/3/2026, 12:29:04 am"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "07455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "1234578908",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 5,
+        "name": "Men's T-Shirt",
+        "price": 9,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+      }
+    ],
+    "paymentId": "pay_SOCw2fS58zaqwI",
+    "summary": {
+      "subtotal": 9,
+      "shipping": 5,
+      "discount": 0,
+      "totalPayable": 14
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-07T04:42:40.320Z",
+    "orderId": "ORD-1772858560331",
+    "orderDate": "7/3/2026, 10:12:40 am"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "07455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "India",
+      "zipCode": "jsdjdjdddxd",
+      "country": "India"
+    },
+    "userEmail": "tusharsinghal1250@gmail.com",
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 1,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "paymentId": "pay_STjpaIem7LGBQR",
+    "summary": {
+      "subtotal": 1,
+      "shipping": 1,
+      "discount": 0,
+      "totalPayable": 2
+    },
+    "status": "Delivered",
+    "createdAt": "2026-03-21T04:08:24.102Z",
+    "orderId": "ORD-1774066104110",
+    "orderDate": "21/3/2026, 9:38:24 am"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "vrearaes",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 1,
+        "name": "Women's Summer Dress",
+        "price": 210,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800"
+      }
+    ],
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 210,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 260
+    },
+    "status": "Cancelled",
+    "createdAt": "2026-04-08T10:07:31.416Z",
+    "orderId": "ORD-1775642851447",
+    "orderDate": "8/4/2026, 3:37:31 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "vrearaes",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 5,
+        "name": "Men's T-Shirt",
+        "price": 99,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+      }
+    ],
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 99,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 149
+    },
+    "status": "Shipped",
+    "createdAt": "2026-04-08T16:38:55.078Z",
+    "orderId": "ORD-1775666335087",
+    "orderDate": "8/4/2026, 10:08:55 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "vrearaes",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 5,
+        "name": "Men's T-Shirt",
+        "price": 99,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+      }
+    ],
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 99,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 149
+    },
+    "status": "Cancelled",
+    "createdAt": "2026-04-08T16:46:58.958Z",
+    "orderId": "ORD-1775666818972",
+    "orderDate": "8/4/2026, 10:16:58 pm",
+    "cancelReason": "Ordered by mistake"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "vrearaes",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 4,
+        "name": "Women's Trowsers",
+        "price": 129,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"
+      }
+    ],
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 129,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 179
+    },
+    "status": "Delivered",
+    "createdAt": "2026-04-08T16:48:15.539Z",
+    "orderId": "ORD-1775666895549",
+    "orderDate": "8/4/2026, 10:18:15 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "vrearaes",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 5,
+        "name": "Men's T-Shirt",
+        "price": 99,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+      }
+    ],
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 99,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 149
+    },
+    "status": "Cancelled",
+    "createdAt": "2026-04-08T17:02:02.617Z",
+    "orderId": "ORD-1775667722638",
+    "orderDate": "8/4/2026, 10:32:02 pm",
+    "cancelReason": "Ordered by mistake"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "vrearaes",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 189,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 189,
+      "shipping": 50,
+      "discount": 0,
+      "totalPayable": 239
+    },
+    "status": "Delivered",
+    "createdAt": "2026-04-08T17:10:19.456Z",
+    "orderId": "ORD-1775668219465",
+    "orderDate": "8/4/2026, 10:40:19 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "tanki road",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 21,
+        "name": "iPhone 17",
+        "price": 129999,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800"
+      }
+    ],
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 129999,
+      "shipping": 50,
+      "discount": 12999.9,
+      "totalPayable": 117049.1
+    },
+    "status": "Delivered",
+    "createdAt": "2026-04-08T17:19:39.127Z",
+    "orderId": "ORD-1775668779131",
+    "orderDate": "8/4/2026, 10:49:39 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Vikash Sharma",
+      "email": "vikashsharma6280@gmail.com",
+      "phone": "06239488796",
+      "address": "vrearaes",
+      "city": "new delhi",
+      "state": "Delhi",
+      "zipCode": "110044",
+      "country": "India"
+    },
+    "userEmail": "vikashsharma6280@gmail.com",
+    "items": [
+      {
+        "id": 8,
+        "name": "Men's Shirt",
+        "price": 149,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1603252109303-2751441dd157?w=800"
+      }
+    ],
+    "discountPercent": 5,
+    "discountAmount": 7.45,
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 149,
+      "shipping": 50,
+      "discount": 7.45,
+      "totalPayable": 191.55
+    },
+    "status": "Delivered",
+    "createdAt": "2026-04-09T09:01:54.654Z",
+    "orderId": "ORD-1775725314658",
+    "orderDate": "9/4/2026, 2:31:54 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "07455096791gtgy5g",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "123457",
+      "country": "India"
+    },
+    "userEmail": "vikashpandit2007@gmail.com",
+    "items": [
+      {
+        "id": 41,
+        "name": "APPLE iPhone 17 Pro Max (Cosmic Orange, 256 GB)",
+        "price": 149900,
+        "quantity": 1,
+        "image": "https://rukminim2.flixcart.com/image/1536/1536/xif0q/mobile/f/v/m/-original-imahft6chnx2vbuy.jpeg?q=90"
+      }
+    ],
+    "discountPercent": 5,
+    "discountAmount": 7495,
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "summary": {
+      "subtotal": 149900,
+      "shipping": 50,
+      "discount": 7495,
+      "totalPayable": 142455
+    },
+    "status": "Pending - Cash on Delivery",
+    "createdAt": "2026-05-31T13:39:37.825Z",
+    "orderId": "ORD-1780234777900",
+    "orderDate": "31/5/2026, 7:09:37 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "MP",
+      "state": "india",
+      "zipCode": "123457",
+      "country": "India"
+    },
+    "userEmail": "vikashpandit2007@gmail.com",
+    "items": [
+      {
+        "id": 4,
+        "name": "Women's Trowsers",
+        "price": 129,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"
+      }
+    ],
+    "discountPercent": 5,
+    "discountAmount": 6.45,
+    "summary": {
+      "subtotal": 129,
+      "shipping": 50,
+      "discount": 6.45,
+      "totalPayable": 172.55
+    },
+    "createdAt": "2026-05-31T13:52:16.216Z",
+    "paymentMethod": "Cash on Delivery",
+    "paymentId": null,
+    "status": "Pending - Cash on Delivery",
+    "orderId": "ORD-1780235536225",
+    "orderDate": "31/5/2026, 7:22:16 pm"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "agra",
+      "state": "Uttar Pradesh",
+      "zipCode": "123457",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-05-31T14:19:03.235Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780237143240",
+    "orderDate": "31/5/2026, 7:49:03 pm",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "Hada gali main baazar ",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh",
+      "zipCode": "226001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-05-31T14:37:57.241Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780238277304",
+    "orderDate": "31/5/2026, 8:07:57 pm",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "Hada gali main baazar",
+      "city": "Noida",
+      "state": "Uttar Pradesh",
+      "zipCode": "201301",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 189,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+        ],
+        "description": "Comfortable fit jeans",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "total": 229.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-06-01T03:32:05.597Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780284725625",
+    "orderDate": "1/6/2026, 9:02:05 am",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "Meerut",
+      "state": "Uttar Pradesh",
+      "zipCode": "250001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-06-01T03:33:34.181Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780284814189",
+    "orderDate": "1/6/2026, 9:03:34 am",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "tusharsinghal1250@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "Kanpur",
+      "state": "Uttar Pradesh",
+      "zipCode": "208001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-06-01T03:36:33.600Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780284993610",
+    "orderDate": "1/6/2026, 9:06:33 am",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "7455096791",
+      "address": "Hada gali main baazar",
+      "city": "Mathura",
+      "state": "Uttar Pradesh",
+      "zipCode": "281001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-06-01T03:44:12.285Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780285452293",
+    "orderDate": "1/6/2026, 9:14:12 am",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "Ghaziabad",
+      "state": "Uttar Pradesh",
+      "zipCode": "201001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-06-01T03:47:12.773Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780285632782",
+    "orderDate": "1/6/2026, 9:17:12 am",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh",
+      "zipCode": "226001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-06-01T03:48:05.721Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780285685727",
+    "orderDate": "1/6/2026, 9:18:05 am",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "7455096791",
+      "address": "Hada gali main baazar ",
+      "city": "Kanpur",
+      "state": "Uttar Pradesh",
+      "zipCode": "208001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1
+      }
+    ],
+    "total": 286.55,
+    "paymentMethod": "cod",
+    "createdAt": "2026-06-01T03:48:54.392Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780285734399",
+    "orderDate": "1/6/2026, 9:18:54 am",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "Mathura",
+      "state": "Uttar Pradesh",
+      "zipCode": "281001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 24,
+        "name": "Nike Air Zoom Shoes",
+        "price": 6999,
+        "category": "shoes",
+        "images": [
+          "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800"
+        ],
+        "description": "High comfort running shoes for daily workouts",
+        "rating": 4.6,
+        "reviews": [],
+        "stock": 60,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800"
+      }
+    ],
+    "total": 6699,
+    "subtotal": 6999,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 350,
+    "paymentMethod": "cod",
+    "userEmail": "vikashpandit2007@gmail.com",
+    "userName": "Tushar Singhal",
+    "createdAt": "2026-06-01T03:57:29.635Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780286249641",
+    "orderDate": "1/6/2026, 9:27:29 am",
+    "status": "Cancelled",
+    "cancelReason": "Changed my mind"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "7455096791",
+      "address": "Hada gali main baazar",
+      "city": "Mathura",
+      "state": "Uttar Pradesh",
+      "zipCode": "281001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 189,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+        ],
+        "description": "Comfortable fit jeans",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "total": 230,
+    "subtotal": 189,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 9,
+    "paymentMethod": "cod",
+    "userEmail": "vikashpandit2007@gmail.com",
+    "userName": "Tushar Singhal",
+    "createdAt": "2026-06-01T04:20:01.532Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780287601582",
+    "orderDate": "1/6/2026, 9:50:01 am",
+    "status": "Cancelled",
+    "cancelReason": "Ordered by mistake",
+    "cancelledAt": "2026-06-05T08:31:56.153Z",
+    "inventoryRestoredAt": "2026-06-05T08:31:56.153Z",
+    "statusUpdatedAt": "2026-06-05T08:31:56.153Z"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "7455096791",
+      "address": "hada gali main baazar jagner",
+      "city": "Agra",
+      "state": "Uttar Pradesh",
+      "zipCode": "282001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+      }
+    ],
+    "total": 287,
+    "subtotal": 249,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 12,
+    "paymentMethod": "cod",
+    "userEmail": "vikashpandit2007@gmail.com",
+    "userName": "Tushar Singhal",
+    "createdAt": "2026-06-01T05:30:44.604Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780291844671",
+    "orderDate": "2026-06-01T05:30:44.671Z",
+    "status": "Delivered"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "Shagun1240@gmail.com",
+      "phone": "9897937297",
+      "address": "Mankamwswar market Agra",
+      "city": "Agra",
+      "state": "Uttar Pradesh",
+      "zipCode": "282001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 11,
+        "name": "High Heels",
+        "price": 799,
+        "category": "shoes",
+        "images": [
+          "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+        ],
+        "description": "Elegant high heel shoes",
+        "rating": 5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+      }
+    ],
+    "total": 809,
+    "subtotal": 799,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 40,
+    "paymentMethod": "cod",
+    "userEmail": "Shagun1240@gmail.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-01T06:16:21.551Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780294581599",
+    "orderDate": "2026-06-01T06:16:21.599Z",
+    "status": "Shipped"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "admin@supernova.com",
+      "phone": "9897937297",
+      "address": "Hada gali main baazar",
+      "city": "Ghaziabad",
+      "state": "Uttar Pradesh",
+      "zipCode": "201001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 5,
+        "name": "Men's T-Shirt",
+        "price": 99,
+        "category": "men",
+        "images": [
+          "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+        ],
+        "description": "Classic cotton t-shirt",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+      }
+    ],
+    "total": 144,
+    "subtotal": 99,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 5,
+    "paymentMethod": "cod",
+    "userEmail": "admin@supernova.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-02T18:06:05.692Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780423565735",
+    "orderDate": "2026-06-02T18:06:05.735Z",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "admin@supernova.com",
+      "phone": "9897937297",
+      "address": "hada gali main baazar jagner",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh",
+      "zipCode": "226001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 6,
+        "name": "Men's Jeans",
+        "price": 299,
+        "category": "men",
+        "images": [
+          "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+        ],
+        "description": "Slim fit denim jeans",
+        "rating": 5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "selectedVariant": {
+          "Size": "S",
+          "Color": "Black",
+          "sku": "s-black",
+          "label": "Size: S | Color: Black"
+        },
+        "cartKey": "6-s-black",
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+      }
+    ],
+    "total": 334,
+    "subtotal": 299,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 15,
+    "paymentMethod": "cod",
+    "userEmail": "admin@supernova.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-03T12:45:21.570Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780490721578",
+    "orderDate": "2026-06-03T12:45:21.577Z",
+    "status": "Success"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "admin@supernova.com",
+      "phone": "9897937297",
+      "address": "hada gali main baazar jagner",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh",
+      "zipCode": "226001",
+      "country": "India",
+      "id": 1780490721570,
+      "label": "Shagun Singhal - Lucknow"
+    },
+    "items": [
+      {
+        "id": 11,
+        "name": "High Heels",
+        "price": 799,
+        "category": "shoes",
+        "images": [
+          "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+        ],
+        "description": "Elegant high heel shoes",
+        "rating": 5,
+        "reviews": [],
+        "stock": 50,
+        "quantity": 1,
+        "selectedVariant": {
+          "Size": "6",
+          "Color": "Black",
+          "sku": "6-black",
+          "label": "Size: 6 | Color: Black"
+        },
+        "cartKey": "11-6-black",
+        "image": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+      }
+    ],
+    "total": 809,
+    "subtotal": 799,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 40,
+    "paymentMethod": "cod",
+    "userEmail": "admin@supernova.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-03T13:07:09.764Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780492029774",
+    "orderDate": "2026-06-03T13:07:09.774Z",
+    "status": "Delivered",
+    "statusUpdatedAt": "2026-06-04T09:12:32.294Z",
+    "inventoryRestoredAt": "2026-06-04T09:09:24.363Z"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "Shagun1240@gmail.com",
+      "phone": "9897937297",
+      "address": "Hada gali main baazar",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh",
+      "zipCode": "226001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 3,
+        "name": "Women's Jeans",
+        "price": 189,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+        ],
+        "description": "Comfortable fit jeans",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800",
+        "cartKey": "3-default",
+        "quantity": 1
+      }
+    ],
+    "total": 230,
+    "subtotal": 189,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 9,
+    "paymentMethod": "cod",
+    "userEmail": "Shagun1240@gmail.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-04T09:04:00.106Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780563840117",
+    "orderDate": "2026-06-04T09:04:00.117Z",
+    "status": "Cancelled",
+    "cancelReason": "Changed my mind",
+    "cancelledAt": "2026-06-04T09:04:15.275Z",
+    "inventoryRestoredAt": "2026-06-04T09:04:15.275Z",
+    "statusUpdatedAt": "2026-06-04T09:04:15.275Z"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "Shagun1240@gmail.com",
+      "phone": "9897937297",
+      "address": "hada gali main baazar jagner",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh",
+      "zipCode": "226001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1,
+        "selectedVariant": {
+          "Size": "S",
+          "Color": "White",
+          "sku": "s-white",
+          "label": "Size: S | Color: White"
+        },
+        "cartKey": "2-s-white"
+      }
+    ],
+    "total": 287,
+    "subtotal": 249,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 12,
+    "paymentMethod": "cod",
+    "userEmail": "Shagun1240@gmail.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-04T13:28:03.984Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780579683990",
+    "orderDate": "2026-06-04T13:28:03.990Z",
+    "status": "Cancelled",
+    "cancelReason": "Changed my mind",
+    "cancelledAt": "2026-06-04T13:28:23.486Z",
+    "inventoryRestoredAt": "2026-06-04T13:28:23.486Z",
+    "statusUpdatedAt": "2026-06-04T13:28:23.486Z"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "Shagun1240@gmail.com",
+      "phone": "9897937297",
+      "address": "Hada gali main baazar",
+      "city": "Lucknow",
+      "state": "Uttar Pradesh",
+      "zipCode": "226001",
+      "country": "India",
+      "id": 1780563840106,
+      "label": "Shagun Singhal - Lucknow"
+    },
+    "items": [
+      {
+        "id": 36,
+        "name": "Women's Tote Bag",
+        "price": 2199,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800"
+        ],
+        "description": "Spacious tote bag for office and travel",
+        "rating": 4.4,
+        "reviews": [],
+        "stock": 62,
+        "image": "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800",
+        "quantity": 1,
+        "selectedVariant": {
+          "Size": "S",
+          "Color": "Black",
+          "sku": "s-black",
+          "label": "Size: S | Color: Black"
+        },
+        "cartKey": "36-s-black"
+      }
+    ],
+    "total": 2139,
+    "subtotal": 2199,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 110,
+    "paymentMethod": "cod",
+    "userEmail": "Shagun1240@gmail.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-05T08:00:40.546Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780646440554",
+    "orderDate": "2026-06-05T08:00:40.554Z",
+    "status": "Returned",
+    "statusUpdatedAt": "2026-06-05T08:29:33.289Z",
+    "returnReason": "Product damaged / defective",
+    "returnRequestedAt": "2026-06-05T08:02:34.185Z",
+    "inventoryRestoredAt": "2026-06-05T08:29:33.289Z"
+  },
+  {
+    "customer": {
+      "fullName": "Shagun Singhal",
+      "email": "vikashpandit2007@gmail.com",
+      "phone": "9897937297",
+      "address": "hada gali main baazar jagner",
+      "city": "Agra",
+      "state": "Uttar Pradesh",
+      "zipCode": "282001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 2,
+        "name": "Women's Handbag",
+        "price": 249,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+        ],
+        "description": "Elegant leather handbag",
+        "rating": 4.5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+        "quantity": 1,
+        "selectedVariant": {
+          "Size": "S",
+          "Color": "Black",
+          "sku": "s-black",
+          "label": "Size: S | Color: Black"
+        },
+        "cartKey": "2-s-black"
+      }
+    ],
+    "total": 287,
+    "subtotal": 249,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 12,
+    "paymentMethod": "cod",
+    "userEmail": "vikashpandit2007@gmail.com",
+    "userName": "Shagun Singhal",
+    "createdAt": "2026-06-05T14:02:51.469Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1780668171479",
+    "orderDate": "2026-06-05T14:02:51.479Z",
+    "status": "Delivered",
+    "cancelReason": "Changed my mind",
+    "cancelledAt": "2026-06-05T14:03:16.462Z",
+    "inventoryRestoredAt": "2026-06-05T14:03:16.462Z",
+    "statusUpdatedAt": "2026-06-11T09:56:40.083Z"
+  },
+  {
+    "customer": {
+      "fullName": "Tushar Singhal",
+      "email": "singhalt931@gmail.com",
+      "phone": "7455096791",
+      "address": "ryrupoewoihpotrlkl][ler",
+      "city": "Agra",
+      "state": "Uttar Pradesh",
+      "zipCode": "282001",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 1,
+        "name": "Women's Summer Dress",
+        "price": 99,
+        "category": "women",
+        "images": [
+          "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800"
+        ],
+        "description": "Beautiful summer dress for women",
+        "rating": 4.7,
+        "reviews": [],
+        "stock": 20,
+        "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800",
+        "quantity": 1,
+        "selectedVariant": {
+          "Size": "S",
+          "Color": "Black",
+          "sku": "s-black",
+          "label": "Size: S | Color: Black"
+        },
+        "cartKey": "1-s-black"
+      }
+    ],
+    "total": 144,
+    "subtotal": 99,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 5,
+    "paymentMethod": "cod",
+    "userEmail": "singhalt931@gmail.com",
+    "userName": "Tushar Singhal",
+    "createdAt": "2026-06-18T07:04:25.559Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1781766267253",
+    "orderDate": "2026-06-18T07:04:27.253Z",
+    "status": "Cancelled",
+    "cancelReason": "Changed my mind",
+    "cancelledAt": "2026-06-18T07:05:59.485Z",
+    "inventoryRestoredAt": "2026-06-18T07:05:59.485Z",
+    "statusUpdatedAt": "2026-06-18T07:05:59.485Z"
+  }
+]

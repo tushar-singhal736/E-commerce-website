@@ -1,0 +1,159 @@
+/* 1. Browser ki default khali jagah ko jad se khatam karein */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* THEME VARIABLES */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a1a1a;
+  --primary-color: #3498db;
+  --secondary-color: #2c3e50;
+  --card-bg: #ffffff;
+  --card-border: #eee;
+  --nav-bg: #2c3e50;
+  --nav-text: #ffffff;
+}
+[data-theme='dark'] {
+  --bg-color: #0f0f0f;
+  --text-color: #f0f0f0;
+  --primary-color: #4a9eff;
+  --secondary-color: #1a1a2e;
+  --card-bg: #1a1a1a;
+  --card-border: #2d2d2d;
+  --nav-bg: #1a1a2e;
+  --nav-text: #ffffff;
+}
+
+body,
+.navbar,
+.card,
+.product-card,
+.product-card-home,
+.category-card,
+.order-card,
+.profile-card,
+.detail-card {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  height: 100%;
+  /* Navbar ke upar wali space ko khatam karne ke liye */
+  overflow-x: hidden; 
+}
+
+#root {
+  height: 100%;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  /* Yeh line navbar ke upar ki space ko fix karegi */
+  vertical-align: baseline; 
+}
+
+/* 2. Beech ka content area (Jo navbar aur footer ko door rakhega) */
+main, .content-area, .routes-wrapper {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3. Navbar Fix (Taki upar koi gap na rahe) */
+nav {
+  margin-top: 0 !important;
+  top: 0;
+}
+
+/* Global theme application */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Add-to-cart toast */
+.app-toast {
+  position: fixed;
+  top: 84px;
+  right: 16px;
+  z-index: 9999;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(17, 24, 39, 0.92);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(6px);
+  animation: slideIn 0.3s ease, slideOut 0.3s ease 4.7s forwards;
+}
+
+.app-toast--success {
+  background: rgba(34, 197, 94, 0.92);
+  color: #fff;
+}
+
+.app-toast--error {
+  background: rgba(239, 68, 68, 0.92);
+  color: #fff;
+}
+
+.app-toast--warning {
+  background: rgba(217, 119, 6, 0.92);
+  color: #fff;
+}
+
+.toast-icon {
+  margin-right: 6px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+a, .nav-link, .footer-section ul li a {
+  color: var(--primary-color);
+}
+.card,
+.product-card,
+.product-card-home,
+.category-card,
+.order-card,
+.profile-card,
+.detail-card {
+  background: var(--card-bg);
+  border-color: var(--card-border) !important;
+}
+.navbar {
+  background-color: var(--nav-bg) !important;
+  color: var(--nav-text) !important;
+}

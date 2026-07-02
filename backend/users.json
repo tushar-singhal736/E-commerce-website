@@ -1,0 +1,46 @@
+[
+  {
+    "id": "1780647748686",
+    "fullName": "vikash pandit",
+    "email": "vikashpandit2007@gmail.com",
+    "phone": "9897937297",
+    "dateOfBirth": "2005-06-23",
+    "passwordHash": "91b8de27f1a7e7df5d79a303cb99e9e2fb3579759d19bd34630d2df99853d3c9972da5ffb0937829e564aa8bfc53cfdd9b6785d8da6215e055054f5f7edf7a18",
+    "passwordSalt": "74906ae26d67fdee61bd186d1e88f0d4",
+    "role": "customer",
+    "createdAt": "2026-06-05T08:22:28.686Z"
+  },
+  {
+    "id": "1780895383154",
+    "fullName": "Shagun Singhal",
+    "email": "shagun1240@gmail.com",
+    "phone": "9897937297",
+    "dateOfBirth": "2007-12-17",
+    "passwordHash": "03e68db3ce2d54a1865353b97efb9759d85cd10d1c7adc7e91879052adca813b30e7461aa11453e27d9a7106783e19071d618fd01ff33c85fbe3b876824204e5",
+    "passwordSalt": "c304a2a330445e96cfdb17d77b9903d9",
+    "role": "customer",
+    "createdAt": "2026-06-08T05:09:43.154Z"
+  },
+  {
+    "id": "1781760636271",
+    "fullName": "Test User",
+    "email": "testuser123@test.com",
+    "phone": "9876543210",
+    "dateOfBirth": "2000-01-01",
+    "passwordHash": "c7aa3a4b9d637722c47ae5559901a5df6727b787ba28a3f34e6f0f6e70bbb21574a04133c4c67daf8a479cf007bc54589c0c665d62c052f72cd08ab0288bf49e",
+    "passwordSalt": "0e474c7f184cad95e1696a4a8adfff87",
+    "role": "customer",
+    "createdAt": "2026-06-18T05:30:36.271Z"
+  },
+  {
+    "id": "1781766218580",
+    "fullName": "Tushar Singhal",
+    "email": "singhalt931@gmail.com",
+    "phone": "7455096791",
+    "dateOfBirth": "2026-06-01",
+    "passwordHash": "d27be6ca564bec5889f346379a2e945b4761e30b2e1434ca424993b4a9966f0649c029d96d45667ae2d8991d6e221b64d3be4f61ee4aab9060ce07aedeb8aaa7",
+    "passwordSalt": "e9eba507d168599032c0547f688355be",
+    "role": "customer",
+    "createdAt": "2026-06-18T07:03:38.580Z"
+  }
+]

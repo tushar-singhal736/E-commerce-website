@@ -1,0 +1,23 @@
+{
+  "name": "ecommerce-backend",
+  "version": "1.0.0",
+  "description": "Backend API for E-commerce website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "migrate:mongodb": "node mongoMigration.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.3.1",
+    "express": "^4.22.1",
+    "express-rate-limit": "^7.1.5",
+    "mongodb": "^7.4.0",
+    "razorpay": "^2.9.6",
+    "twilio": "^5.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

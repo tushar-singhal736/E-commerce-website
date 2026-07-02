@@ -1,0 +1,40 @@
+{
+  "name": "ecommerce-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E-commerce website with React",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "start:dev": "react-scripts start",
+    "start:backend": "npm start --prefix backend",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "postinstall": "npm install --prefix backend",
+    "heroku-postbuild": "npm run build"
+  },
+  "proxy": "http://localhost:5005",
+  "dependencies": {
+    "dompurify": "^3.0.6",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^5.0.7",
+    "lucide-react": "^0.575.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^6.8.0",
+    "react-scripts": "5.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

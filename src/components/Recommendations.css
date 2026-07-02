@@ -1,0 +1,432 @@
+.recommendations-section {
+  width: min(1220px, calc(100% - 32px));
+  margin: 34px auto;
+  color: var(--text-color, #1a1a1a);
+}
+
+.recommendations-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.recommendations-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+[data-theme='dark'] .recommendations-eyebrow {
+  color: #2dd4bf;
+}
+
+.recommendations-header h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--text-color, #1a1a1a);
+}
+
+.recommendations-header p {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 14px;
+}
+
+[data-theme='dark'] .recommendations-header p {
+  color: #a7b4c8;
+}
+
+.recommendations-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.recommendations-actions button,
+.recommendation-quick-actions button,
+.recommendation-footer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+}
+
+.recommendations-actions button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--card-border, #e5e7eb);
+  border-radius: 8px;
+  background: var(--card-bg, #ffffff);
+  color: var(--text-color, #1a1a1a);
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+}
+
+.recommendations-actions button:hover {
+  border-color: #0f766e;
+  color: #0f766e;
+}
+
+.recommendations-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.recommendations-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(230px, 252px);
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 2px 14px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.recommendations-row::-webkit-scrollbar {
+  height: 8px;
+}
+
+.recommendations-row::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.recommendation-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--card-border, #e5e7eb);
+  border-radius: 8px;
+  background: var(--card-bg, #ffffff);
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.08);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+[data-theme='dark'] .recommendation-card {
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.24);
+}
+
+.recommendation-card:hover {
+  transform: translateY(-3px);
+  border-color: #0f766e;
+  box-shadow: 0 18px 36px rgba(16, 24, 40, 0.13);
+}
+
+.recommendation-image {
+  position: relative;
+  aspect-ratio: 4 / 3.15;
+  background: #eef2f7;
+  overflow: hidden;
+}
+
+.recommendation-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.recommendation-card:hover .recommendation-image img {
+  transform: scale(1.04);
+}
+
+.recommendation-rank,
+.recommendation-rating {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+}
+
+.recommendation-rank {
+  top: 10px;
+  left: 10px;
+  color: #111827;
+}
+
+.recommendation-rating {
+  right: 10px;
+  bottom: 10px;
+  color: #0f766e;
+}
+
+.recommendation-quick-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.recommendation-card:hover .recommendation-quick-actions {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.recommendation-quick-actions button {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #111827;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+}
+
+.recommendation-quick-actions button:hover {
+  color: #0f766e;
+}
+
+.recommendation-quick-actions button.is-saved {
+  color: #e11d48;
+}
+
+[data-theme='dark'] .recommendation-rank,
+[data-theme='dark'] .recommendation-quick-actions button {
+  background: rgba(17, 24, 39, 0.94);
+  color: #f8fafc;
+}
+
+[data-theme='dark'] .recommendation-quick-actions button.is-saved {
+  color: #fb7185;
+}
+
+[data-theme='dark'] .recommendation-image {
+  background: #111827;
+}
+
+[data-theme='dark'] .recommendation-buy-now {
+  background: #ffffff;
+  color: #111827;
+}
+
+.recommendation-body {
+  padding: 12px;
+}
+
+.recommendation-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.recommendation-category,
+.stock-live,
+.stock-out {
+  display: inline-flex;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.recommendation-category {
+  overflow: hidden;
+  color: #0f766e;
+  text-overflow: ellipsis;
+}
+
+.stock-live {
+  color: #16a34a;
+}
+
+.stock-out {
+  color: #dc2626;
+}
+
+.recommendation-body h3 {
+  display: -webkit-box;
+  min-height: 40px;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-color, #1a1a1a);
+  font-size: 15px;
+  line-height: 1.32;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.recommendation-reason {
+  display: -webkit-box;
+  min-height: 34px;
+  margin: 7px 0 0;
+  overflow: hidden;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+[data-theme='dark'] .recommendation-reason {
+  color: #a7b4c8;
+}
+
+.recommendation-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 11px;
+}
+
+.recommendation-footer div {
+  min-width: 0;
+}
+
+.recommendation-footer strong {
+  display: block;
+  font-size: 15px;
+  color: var(--text-color, #1a1a1a);
+}
+
+.recommendation-footer span {
+  display: block;
+  margin-top: 2px;
+  color: #667085;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.recommendation-footer button {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.recommendation-footer button:hover,
+.recommendation-buy-now:hover {
+  background: #115e59;
+}
+
+.recommendation-footer button:disabled,
+.recommendation-buy-now:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.recommendation-buy-now {
+  width: 100%;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.recommendation-card--loading {
+  cursor: default;
+  padding-bottom: 12px;
+}
+
+.recommendation-card--loading:hover {
+  transform: none;
+  border-color: var(--card-border, #e5e7eb);
+}
+
+.recommendation-img-skeleton,
+.recommendation-line {
+  background: linear-gradient(90deg, #eef2f7, #f8fafc, #eef2f7);
+  background-size: 200% 100%;
+  animation: recommendationShimmer 1.25s ease-in-out infinite;
+}
+
+.recommendation-img-skeleton {
+  aspect-ratio: 4 / 3.15;
+}
+
+.recommendation-line {
+  height: 12px;
+  margin: 12px 12px 0;
+  border-radius: 999px;
+}
+
+.recommendation-line.short {
+  width: 54%;
+}
+
+.recommendation-line.medium {
+  width: 74%;
+}
+
+@keyframes recommendationShimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .recommendations-section {
+    width: calc(100% - 24px);
+    margin: 24px auto;
+  }
+
+  .recommendations-header {
+    align-items: flex-start;
+  }
+
+  .recommendations-header h2 {
+    font-size: 20px;
+  }
+
+  .recommendations-header p {
+    font-size: 13px;
+  }
+
+  .recommendations-actions {
+    display: none;
+  }
+
+  .recommendations-row {
+    grid-auto-columns: minmax(188px, 74vw);
+    gap: 10px;
+  }
+
+  .recommendation-body {
+    padding: 10px;
+  }
+
+  .recommendation-quick-actions {
+    opacity: 1;
+    transform: none;
+  }
+}

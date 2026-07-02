@@ -1,0 +1,166 @@
+/* Full page background */
+.main-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Deep Modern Gradient */
+  background: radial-gradient(circle at top left, #1a1a2e, #16213e, #0f3460);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Central Login Card */
+.auth-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px; /* Card size balanced */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  color: white;
+}
+
+.auth-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.auth-header p {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+}
+
+/* Form inputs stack vertically */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Sahi space fields ke beech */
+}
+
+.auth-form input {
+  width: 100%; /* Ise 100% rakha hai taaki box se bahar na jaye */
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box; /* Padding ko width ke andar rakhta hai */
+  transition: 0.3s ease;
+}
+
+.auth-form input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #4cc9f0;
+  box-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+}
+
+/* Button style */
+.action-btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  background: #4cc9f0; /* Vibrant Cyan */
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.action-btn:hover {
+  background: #4895ef;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+}
+
+/* Bottom Toggle Link */
+.toggle-section {
+  margin-top: 25px;
+}
+
+.forgot-btn {
+  display: inline-flex;
+  margin-bottom: 12px;
+  border: 0;
+  background: transparent;
+  color: #4cc9f0;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.forgot-btn:hover {
+  text-decoration: underline;
+}
+
+.toggle-section p {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.toggle-section span {
+  color: #4cc9f0;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.toggle-section span:hover {
+  text-decoration: underline;
+}
+
+/* Date input white icon fix */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-wrapper {
+    padding: 15px;
+  }
+  .auth-card {
+    padding: 30px 20px;
+    max-width: 350px;
+  }
+  .auth-header h2 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-wrapper {
+    padding: 10px;
+  }
+  .auth-card {
+    padding: 25px 15px;
+    max-width: 100%;
+    border-radius: 15px;
+  }
+  .auth-header h2 {
+    font-size: 1.4rem;
+  }
+  .auth-header p {
+    font-size: 0.8rem;
+  }
+  .auth-form input {
+    padding: 12px;
+    font-size: 14px;
+  }
+  .action-btn {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+}
+
