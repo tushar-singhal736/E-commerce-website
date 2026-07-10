@@ -164,14 +164,13 @@ const sanitizeUser = (user) => ({
 });
 
 if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-  console.error("❌ Error: RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET not found in .env file!");
-  process.exit(1);
+  console.warn("⚠️  Warning: RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET not found. Payment features will be disabled.");
 }
 
-// Razorpay instance
+// Razorpay instance (with dummy keys if not configured)
 const razorpay = new Razorpay({
-    key_id: RAZORPAY_KEY_ID,
-    key_secret: RAZORPAY_KEY_SECRET
+    key_id: RAZORPAY_KEY_ID || 'rzp_test_dummy_key',
+    key_secret: RAZORPAY_KEY_SECRET || 'test_dummy_secret'
 });
 
 // Helper: Read JSON safely
