@@ -7,11 +7,11 @@ const getRuntimeApiUrl = () => {
   if (typeof window === 'undefined') {
     return cleanUrl(process.env.REACT_APP_API_URL || `http://localhost:${DEFAULT_API_PORT}`);
   }
-  return cleanUrl(`${window.location.protocol}//${window.location.hostname}:${DEFAULT_API_PORT}`);
+  return cleanUrl(window.location.origin);
 };
 
-// Dev: CRA proxy forwards /api/* (same-origin, no CORS). Prod: talk to API on same host.
-const API_BASE_URL = isDev ? '' : cleanUrl(process.env.REACT_APP_API_URL || getRuntimeApiUrl());
+// Dev: CRA proxy forwards /api/* (same-origin, no CORS). Prod: talk to API on same host unless REACT_APP_API_URL is set.
+const API_BASE_URL = isDev ? '' : cleanUrl(process.env.REACT_APP_API_URL || '');
 const API_FALLBACK_URL = getRuntimeApiUrl();
 
 const getStoredAuthToken = () => {

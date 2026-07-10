@@ -21,3 +21,5 @@ services:
         value: "true"
       - key: MIGRATE_MONGO_ON_START
         value: "false"
+      - key: NODE_ENV
+        value: "production"
