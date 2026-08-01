@@ -94,12 +94,26 @@ const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
-const USE_MONGO = String(process.env.USE_MONGO ?? "true").toLowerCase() !== "false";
+const configuredUseMongo = String(process.env.USE_MONGO ?? "").trim().toLowerCase();
+const USE_MONGO = configuredUseMongo === "true" || (configuredUseMongo === "" && Boolean(process.env.MONGODB_URI));
 const db = require("./db");
 const MONGODB_URI = process.env.MONGODB_URI || "";
 const MONGODB_DB = process.env.MONGODB_DB || "ecommerce";
 const MIGRATE_MONGO_ON_START = String(process.env.MIGRATE_MONGO_ON_START || "false").toLowerCase() === "true";
 const { migrateMongoFromJson } = require("./mongoMigration");
+let mongoConnected = false;
+
+const shouldUseMongo = () => USE_MONGO && mongoConnected;
+
+const hasRazorpayKeys = Boolean(RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET);
+const razorpay = hasRazorpayKeys ? new Razorpay({
+    key_id: RAZORPAY_KEY_ID,
+    key_secret: RAZORPAY_KEY_SECRET
+}) : null;
+
+if (!hasRazorpayKeys) {
+    console.warn("⚠️ Razorpay keys missing. Payment order creation will be disabled until RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are configured.");
+}
 
 const USERS_FILE = path.join(__dirname, "users.json");
 const SESSIONS_FILE = path.join(__dirname, "sessions.json");
@@ -115,7 +129,7 @@ const JSON_COLLECTION_MAP = new Map([
 
 const writeData = async (file, data) => {
     try {
-        if (USE_MONGO) {
+        if (shouldUseMongo()) {
             const collection = JSON_COLLECTION_MAP.get(file);
             if (collection) {
                 if (collection === 'settings') {
@@ -163,19 +177,9 @@ const sanitizeUser = (user) => ({
     role: user.role || "customer",
 });
 
-if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-  console.warn("⚠️  Warning: RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET not found. Payment features will be disabled.");
-}
-
-// Razorpay instance (with dummy keys if not configured)
-const razorpay = new Razorpay({
-    key_id: RAZORPAY_KEY_ID || 'rzp_test_dummy_key',
-    key_secret: RAZORPAY_KEY_SECRET || 'test_dummy_secret'
-});
-
 // Helper: Read JSON safely
 const readData = async (file) => {
-    if (USE_MONGO) {
+    if (shouldUseMongo()) {
         const collection = JSON_COLLECTION_MAP.get(file);
         if (collection && collection !== 'settings') {
             return await db.getAll(collection);
@@ -194,7 +198,7 @@ const readData = async (file) => {
 
 // Helper: Read settings safely
 const readSettings = async () => {
-    if (USE_MONGO) {
+    if (shouldUseMongo()) {
         return await db.getSettings();
     }
 
@@ -214,7 +218,7 @@ const writeSettings = async (settings) => {
     const discountPercent = Math.max(0, Math.min(90, Number(settings.discountPercent) || 0));
     const next = { discountPercent };
 
-    if (USE_MONGO) {
+    if (shouldUseMongo()) {
         return await db.saveSettings(next);
     }
 
@@ -1126,6 +1130,10 @@ app.delete("/api/admin/products/:id", adminLimiter, verifyAdmin, async (req, res
 
 // 2️⃣ Create Razorpay Order
 app.post("/api/create-order", apiLimiter, async (req, res) => {
+    if (!hasRazorpayKeys || !razorpay) {
+        return errorResponse(res, 503, "Payment gateway not configured", "RAZORPAY_NOT_CONFIGURED");
+    }
+
     try {
         const { amount } = req.body;
         const amountInPaise = Math.round(Number(amount) * 100);
@@ -1519,12 +1527,30 @@ if (hasClientBuild) {
     });
 }
 
-if (MONGODB_URI && MIGRATE_MONGO_ON_START) {
-    migrateMongoFromJson({ uri: MONGODB_URI, dbName: MONGODB_DB })
-        .then(() => console.log('✅ MongoDB migration completed.'))
-        .catch((err) => console.error('❌ MongoDB migration failed:', err.message || err));
-}
+const initializeBackend = async () => {
+    if (USE_MONGO) {
+        try {
+            await db.connect();
+            mongoConnected = true;
+            console.log('✅ MongoDB connected successfully.');
+        } catch (err) {
+            console.warn('⚠️ MongoDB connection failed. Falling back to JSON file storage.', err.message || err);
+            mongoConnected = false;
+        }
+    }
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Backend ready at http://localhost:${PORT}`);
-});
+    if (MONGODB_URI && MIGRATE_MONGO_ON_START && mongoConnected) {
+        migrateMongoFromJson({ uri: MONGODB_URI, dbName: MONGODB_DB })
+            .then(() => console.log('✅ MongoDB migration completed.'))
+            .catch((err) => console.error('❌ MongoDB migration failed:', err.message || err));
+    }
+
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Backend ready at http://localhost:${PORT}`);
+        if (USE_MONGO && !mongoConnected) {
+            console.warn('⚠️ MongoDB is disabled because connection could not be established. The server is using local JSON data files instead.');
+        }
+    });
+};
+
+initializeBackend();
