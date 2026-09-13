@@ -17,14 +17,15 @@ const allowedOrigins = IS_PRODUCTION
     ? [process.env.FRONTEND_URL, process.env.ADMIN_URL].filter(Boolean)
     : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001'];
 
-if (IS_PRODUCTION && allowedOrigins.length === 0) {
-    throw new Error('FRONTEND_URL or ADMIN_URL must be configured in production.');
-}
+app.set('trust proxy', 1);
 
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
-        if (!IS_PRODUCTION || allowedOrigins.includes(origin)) {
+        const renderOrigin = process.env.RENDER_EXTERNAL_URL
+            || (process.env.RENDER_EXTERNAL_HOSTNAME ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}` : '');
+        const isSameOriginDeployment = IS_PRODUCTION && origin === renderOrigin;
+        if (!IS_PRODUCTION || allowedOrigins.includes(origin) || isSameOriginDeployment) {
             return callback(null, true);
         }
         return callback(new Error('CORS origin denied'), false);

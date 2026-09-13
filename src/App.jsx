@@ -207,7 +207,14 @@ function App() {
       };
       loadOrders();
       const intervalId = setInterval(loadOrders, 15000);
-      return () => clearInterval(intervalId);
+      const refreshOnFocus = () => {
+        if (document.visibilityState === 'visible') loadOrders();
+      };
+      document.addEventListener('visibilitychange', refreshOnFocus);
+      return () => {
+        clearInterval(intervalId);
+        document.removeEventListener('visibilitychange', refreshOnFocus);
+      };
     } else {
       setOrders([]);
     }

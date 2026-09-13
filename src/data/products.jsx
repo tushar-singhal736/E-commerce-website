@@ -538,7 +538,9 @@ export const products = [
 
 export const getProducts = async ({ limit = 500, page = 1 } = {}) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/products?limit=${limit}&page=${page}`);
+    const response = await fetch(`${API_BASE_URL}/api/products?limit=${limit}&page=${page}`, {
+      cache: 'no-store',
+    });
     if (!response.ok) {
       throw new Error('Server response was not ok');
     }
@@ -554,7 +556,9 @@ export const getProducts = async ({ limit = 500, page = 1 } = {}) => {
 
 export const getProductById = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
+    const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
+      cache: 'no-store',
+    });
     if (!response.ok) {
       throw new Error('Product request failed');
     }

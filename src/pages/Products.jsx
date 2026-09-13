@@ -34,18 +34,33 @@ function Products({ addToCart, discountPercent = 0, cart = [], user = null, togg
   }, []);
 
   useEffect(() => {
+    let active = true;
+
     const fetchProducts = async () => {
       setLoading(true);
       try {
         const items = await getProducts({ page: 1, limit: 500 });
-        setProducts(items);
+        if (active) setProducts(items);
       } catch (err) {
         console.error('Fetch error:', err);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
+
     fetchProducts();
+
+    const refreshOnFocus = () => {
+      if (document.visibilityState === 'visible') fetchProducts();
+    };
+    const intervalId = window.setInterval(fetchProducts, 15000);
+    document.addEventListener('visibilitychange', refreshOnFocus);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', refreshOnFocus);
+    };
   }, []);
 
   useEffect(() => {
