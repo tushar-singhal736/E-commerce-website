@@ -3,10 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { FaCamera, FaTrash, FaUser, FaEnvelope, FaPhone, FaBirthdayCake, FaLock } from 'react-icons/fa';
 import './Profile.css';
 
-function Profile({ user, logout, setUser, setCartCount }) {
+function Profile({ user, logout, setUser, setCartCount, setToast }) {
   const navigate = useNavigate();
   const [avatar, setAvatar] = useState(null);
   const fileRef = useRef(null);
+
+  const showToast = (message, type = 'error') => {
+    if (setToast) setToast({ message, type });
+    else window.alert(message);
+  };
 
   // Redirect if not logged in
   useEffect(() => {
@@ -15,12 +20,16 @@ function Profile({ user, logout, setUser, setCartCount }) {
     }
   }, [user, navigate]);
 
-  // Load photo from localStorage on mount
+  // Load photo from localStorage or user profile data on mount
   useEffect(() => {
     if (user && user.email) {
       const key = `profile_photo_${user.email}`;
       const saved = localStorage.getItem(key);
-      if (saved) setAvatar(saved);
+      if (saved) {
+        setAvatar(saved);
+      } else if (user.photo) {
+        setAvatar(user.photo);
+      }
     }
   }, [user]);
 
@@ -42,6 +51,7 @@ function Profile({ user, logout, setUser, setCartCount }) {
 
       // 4. Redirect
       navigate('/');
+      showToast('Logged out successfully.', 'success');
     }
   };
 
@@ -75,7 +85,7 @@ function Profile({ user, logout, setUser, setCartCount }) {
           }
         } catch (err) { 
           console.error("Storage full or error:", err); 
-          alert("Storage full! Purani photos delete karein.");
+          showToast("Storage full! Purani photos delete karein.", 'error');
         }
       }
     };

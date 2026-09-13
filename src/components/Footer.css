@@ -140,5 +140,21 @@
   .social-icons, .footer-section p {
     justify-content: center;
   }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 2rem 1rem;
+  }
+  .footer-section h3 {
+    font-size: 1.2rem;
+  }
+  .footer-links li {
+    margin-bottom: 0.5rem;
+  }
 }
 

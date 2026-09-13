@@ -191,6 +191,73 @@
   color: #27ae60; /* green for savings */
 }
 
+.coupon-box {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px dashed var(--card-border);
+  border-radius: 8px;
+  background: rgba(15, 118, 110, 0.06);
+}
+
+.coupon-box label {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: var(--text-color);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.coupon-entry,
+.coupon-applied {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.coupon-entry input {
+  min-height: 40px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.coupon-entry button,
+.coupon-applied button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #0f766e;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.coupon-applied span {
+  display: inline-flex;
+  align-items: center;
+  color: #0f766e;
+  font-weight: 900;
+}
+
+[data-theme='dark'] .coupon-box {
+  background: rgba(45, 212, 191, 0.08);
+  border-color: var(--card-border);
+}
+
+[data-theme='dark'] .coupon-entry input {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+[data-theme='dark'] .coupon-applied span {
+  color: #2dd4bf;
+}
+
 .checkout-btn {
   display: block;
   width: 100%;
@@ -226,3 +293,22 @@
   }
 }
 
+@media (max-width: 480px) {
+  .cart-page {
+    padding: 20px 10px;
+  }
+  .cart-item {
+    grid-template-columns: 80px 1fr;
+    gap: 0.5rem;
+  }
+  .item-image img {
+    width: 70px;
+    height: 70px;
+  }
+  .item-details h3 {
+    font-size: 1rem;
+  }
+  .item-price {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: shopnova-ecommerce
+    env: node
+    plan: free
+    branch: main
+    buildCommand: npm install && npm install --prefix backend && npm run build
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: "ecommerce"
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: USE_MONGO
+        value: "true"
+      - key: MIGRATE_MONGO_ON_START
+        value: "false"
+      - key: NODE_ENV
+        value: "production"
+      - key: FRONTEND_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

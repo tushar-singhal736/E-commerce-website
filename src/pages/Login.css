@@ -90,6 +90,20 @@
   margin-top: 25px;
 }
 
+.forgot-btn {
+  display: inline-flex;
+  margin-bottom: 12px;
+  border: 0;
+  background: transparent;
+  color: #4cc9f0;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.forgot-btn:hover {
+  text-decoration: underline;
+}
+
 .toggle-section p {
   font-size: 14px;
   color: #ccc;
@@ -111,4 +125,42 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .main-wrapper {
+    padding: 15px;
+  }
+  .auth-card {
+    padding: 30px 20px;
+    max-width: 350px;
+  }
+  .auth-header h2 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-wrapper {
+    padding: 10px;
+  }
+  .auth-card {
+    padding: 25px 15px;
+    max-width: 100%;
+    border-radius: 15px;
+  }
+  .auth-header h2 {
+    font-size: 1.4rem;
+  }
+  .auth-header p {
+    font-size: 0.8rem;
+  }
+  .auth-form input {
+    padding: 12px;
+    font-size: 14px;
+  }
+  .action-btn {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+}
 

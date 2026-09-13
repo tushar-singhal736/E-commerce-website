@@ -37,8 +37,21 @@ function Footer() {
           <ul>
             <li><Link to="/">Home</Link></li>
             <li><Link to="/products">All Products</Link></li>
+            <li><Link to="/wishlist">Wishlist</Link></li>
             <li><Link to="/orders">My Orders</Link></li>
             <li><Link to="/profile">My Account</Link></li>
+          </ul>
+        </div>
+
+        <div className="footer-section">
+          <h3>Policies</h3>
+          <ul>
+            <li><Link to="/pages/about">About</Link></li>
+            <li><Link to="/pages/contact">Contact</Link></li>
+            <li><Link to="/pages/privacy">Privacy Policy</Link></li>
+            <li><Link to="/pages/terms">Terms</Link></li>
+            <li><Link to="/pages/returns">Returns</Link></li>
+            <li><Link to="/pages/shipping">Shipping</Link></li>
           </ul>
         </div>
 
@@ -53,7 +66,7 @@ function Footer() {
           <p>
             <FaMapMarkerAlt className="footer-icon" /> 
             <a href={mapLocation} target="_blank" rel="noreferrer" className="contact-link">
-              Boys Hostel, Near Paintra, Knowledge Park 3, Greater Noida - 201310
+              AS boys hostel, Paintra Knowledge Park 3, Greater Noida
             </a>
           </p>
         </div>

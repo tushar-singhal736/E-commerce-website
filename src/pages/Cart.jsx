@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getProductImage, handleImageFallback, PRODUCT_PLACEHOLDER } from '../utils/productImages';
 import './Cart.css';
 
-function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0 }) {
-  const placeholder = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23999" font-size="20">No+Image</text></svg>';
-  const handleImgError = (e) => { e.currentTarget.onerror = null; e.currentTarget.src = placeholder; };
+function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0, activeCoupon, couponPercent = 0, applyCoupon, removeCoupon }) {
+  const [couponCode, setCouponCode] = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleCheckout = () => {
@@ -12,8 +13,9 @@ function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0 }) {
   };
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = 50;
+  const appliedPercent = activeCoupon && couponPercent > 0 ? couponPercent : discountPercent;
 
-  const discountAmount = (total * discountPercent) / 100;
+  const discountAmount = (total * appliedPercent) / 100;
   const finalTotal = total + shipping - discountAmount;
 
   if (cart.length === 0) {
@@ -36,25 +38,30 @@ function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0 }) {
         <div className="cart-content">
           <div className="cart-items">
             {cart.map(item => (
-              <div key={item.id} className="cart-item">
+              <div key={item.cartKey || item.id} className="cart-item">
                 <div className="item-image">
                   <img
-                    src={item.image || item.images?.[0] || placeholder}
+                    src={getProductImage(item)}
                     alt={item.name}
-                    onError={handleImgError}
+                    onError={handleImageFallback(PRODUCT_PLACEHOLDER)}
                   />
                 </div>
                 <div className="item-details">
                   <h3>{item.name}</h3>
                   <p className="item-category">{item.category}</p>
+                  {item.selectedVariant?.label && <p className="item-category">{item.selectedVariant.label}</p>}
                   <p className="item-price">₹{item.price}</p>
                 </div>
                 <div className="item-quantity">
-                  <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                  <button onClick={() => updateQuantity(item.cartKey || item.id, item.quantity - 1)}>
                     -
                   </button>
                   <span>{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                  <button
+                    onClick={() => updateQuantity(item.cartKey || item.id, item.quantity + 1)}
+                    disabled={item.quantity >= 10}
+                    title={item.quantity >= 10 ? 'Maximum 10 units per item' : 'Add one more'}
+                  >
                     +
                   </button>
                 </div>
@@ -63,7 +70,7 @@ function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0 }) {
                 </div>
                 <button 
                   className="remove-btn"
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.cartKey || item.id)}
                 >
                   Remove
                 </button>
@@ -77,12 +84,44 @@ function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0 }) {
               <span>Subtotal:</span>
               <span>₹{total.toFixed(2)}</span>
             </div>
-            {discountPercent > 0 && (
+            {(discountPercent > 0 || (activeCoupon && couponPercent > 0)) && (
               <div className="summary-row">
-                <span>Auto‑applied Discount ({discountPercent}%)</span>
+                <span>{activeCoupon && couponPercent > 0 ? `Coupon applied (${activeCoupon})` : `Auto‑applied Discount (${discountPercent}%)`}</span>
                 <span className="discount-value">-₹{discountAmount.toFixed(2)}</span>
               </div>
             )}
+            <div className="coupon-box">
+              <label>Coupon code</label>
+              {activeCoupon ? (
+                <div className="coupon-applied">
+                  <span>{activeCoupon}</span>
+                  <button type="button" onClick={removeCoupon}>Remove</button>
+                </div>
+              ) : (
+                <div className="coupon-entry">
+                  <input
+                    value={couponCode}
+                    placeholder="WELCOME15"
+                    onChange={(event) => setCouponCode(event.target.value)}
+                  />
+                  <button
+                    type="button"
+                    disabled={couponLoading}
+                    onClick={async () => {
+                      setCouponLoading(true);
+                      try {
+                        const ok = await applyCoupon?.(couponCode);
+                        if (ok) setCouponCode('');
+                      } finally {
+                        setCouponLoading(false);
+                      }
+                    }}
+                  >
+                    {couponLoading ? 'Applying…' : 'Apply'}
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="summary-row">
               <span>Shipping:</span>
               <span>₹{shipping}</span>
@@ -102,4 +141,3 @@ function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0 }) {
 }
 
 export default Cart;
-
