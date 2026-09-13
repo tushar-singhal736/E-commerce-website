@@ -1,21 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import './Orders.css';
+import API_BASE_URL, { apiFetch, getAdminHeaders, parseApiResponse } from '../utils/api';
+import { getProductImage, handleImageFallback, PRODUCT_PLACEHOLDER } from '../utils/productImages';
+import './AdminOrders.css';
 
-const placeholderImg = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23999" font-size="20">No+Image</text></svg>';
-
-function AdminOrders() {
+function AdminOrders({ setToast }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null);
+
+  const showToast = (message, type = 'error') => {
+    if (setToast) setToast({ message, type });
+    else window.alert(message);
+  };
+
+  const getCustomer = (order) => order?.customer || {};
+  const fmtAddress = (cust) => {
+    const parts = [
+      cust.address,
+      cust.city,
+      cust.state,
+      cust.zipCode,
+      cust.country
+    ].map((s) => String(s || '').trim()).filter(Boolean);
+    return parts.join(', ');
+  };
 
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://localhost:5000/api/orders');
-      if (!res.ok) throw new Error('Failed to fetch orders');
-      const data = await res.json();
-      setOrders(data);
+      const res = await apiFetch('/api/orders');
+      const payload = await parseApiResponse(res);
+      const data = Array.isArray(payload) ? payload : payload.items || payload;
+      const sorted = (data || []).sort(
+        (a, b) => new Date(b.createdAt || b.orderDate || 0).getTime() - new Date(a.createdAt || a.orderDate || 0).getTime()
+      );
+      setOrders(sorted);
     } catch (err) {
       setError(err.message || 'Error');
     } finally {
@@ -25,80 +46,244 @@ function AdminOrders() {
 
   useEffect(() => {
     fetchOrders();
+    const intervalId = setInterval(fetchOrders, 5000);
+    return () => clearInterval(intervalId);
   }, []);
 
+  const updateOrderStatus = async (orderId, status) => {
+    setUpdatingId(orderId);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: getAdminHeaders(),
+        body: JSON.stringify({ status })
+      });
+      const updatedOrder = await parseApiResponse(res);
+
+      setOrders((prev) =>
+        prev.map((order) => (order.orderId === orderId ? updatedOrder : order))
+      );
+    } catch (err) {
+      const message = err.message || 'Status update failed';
+      showToast(message, 'error');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const stats = {
+    totalOrders: orders.length,
+    pendingOrders: orders.filter((o) => String(o.status || '').toLowerCase().includes('pending') || String(o.status || '').toLowerCase().includes('processing')).length,
+    deliveredOrders: orders.filter((o) => String(o.status || '').toLowerCase().includes('delivered')).length,
+    revenue: orders.reduce((sum, order) => {
+      const status = String(order.status || '').toLowerCase();
+      if (['cancelled', 'returned', 'return requested', 'pending', 'pending - cash on delivery'].includes(status)) return sum;
+      return sum + (Number(order.total) || Number(order.summary?.totalPayable) || 0);
+    }, 0)
+  };
+
   return (
-    <div className="orders-page">
-      <div className="orders-container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1>Admin — Orders</h1>
+    <div className="admin-orders-page">
+      <div className="admin-orders-container">
+        <div className="admin-orders-topbar">
           <div>
-            <button className="btn btn-primary" onClick={fetchOrders} style={{ marginRight: 8 }}>Refresh</button>
+            <h1>Order Management</h1>
+            <p>Track, update, and manage all customer orders.</p>
           </div>
+          <button className="admin-btn admin-btn-primary" onClick={fetchOrders}>Refresh</button>
         </div>
 
-        {loading && <p>Loading orders…</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {!loading && !error && orders.length > 0 && (
+          <div className="admin-stats-grid">
+            <div className="admin-stat-card">
+              <small>Total Orders</small>
+              <h3>{stats.totalOrders}</h3>
+            </div>
+            <div className="admin-stat-card">
+              <small>Pending/Processing</small>
+              <h3>{stats.pendingOrders}</h3>
+            </div>
+            <div className="admin-stat-card">
+              <small>Delivered</small>
+              <h3>{stats.deliveredOrders}</h3>
+            </div>
+            <div className="admin-stat-card">
+              <small>Total Revenue</small>
+              <h3>₹{stats.revenue.toLocaleString('en-IN')}</h3>
+            </div>
+          </div>
+        )}
+
+        {loading && <p className="admin-info-text">Loading orders…</p>}
+        {error && <p className="admin-error-text">{error}</p>}
 
         {!loading && !error && orders.length === 0 && (
-          <div className="empty-orders">
+          <div className="admin-empty-state">
             <h2>No orders found</h2>
             <p>Orders will appear here after customers place them.</p>
           </div>
         )}
 
-        <div className="orders-list">
+        <div className="admin-orders-list">
           {orders.map((order) => (
-            <div key={order.orderId} className="order-card">
-              <div className="order-header">
+            <div key={order.orderId} className="admin-order-card">
+              <div className="admin-order-header">
                 <div>
                   <h3>
-                    Order ID: <span className="order-id">{order.orderId}</span>
+                    Order ID: <span className="admin-order-id">{order.orderId}</span>
                   </h3>
-                  <p className="order-date">Ordered on: {new Date(order.orderDate).toLocaleString()}</p>
+                  <p className="admin-order-date">Ordered on: {new Date(order.orderDate).toLocaleString()}</p>
                 </div>
 
-                <span className={`status-badge ${order.status || 'processing'}`}>
+                <span className={`admin-status-badge ${String(order.status || 'processing').toLowerCase().replace(/\s+/g, '-')}`}>
                   {order.status || 'processing'}
                 </span>
               </div>
 
-              <div style={{ marginTop: 8 }}>
-                <strong>Customer:</strong>{' '}
-                {order.customer ? `${order.customer.fullName || ''} — ${order.customer.email || ''}` : 'N/A'}
+              <div className="admin-customer-grid">
+                <div className="admin-customer-card">
+                  <div className="admin-customer-title">Customer Details</div>
+                  <div className="admin-customer-row">
+                    <span className="admin-customer-k">Name</span>
+                    <span className="admin-customer-v">{getCustomer(order).fullName || '—'}</span>
+                  </div>
+                  <div className="admin-customer-row">
+                    <span className="admin-customer-k">Email</span>
+                    <span className="admin-customer-v">{getCustomer(order).email || order.userEmail || '—'}</span>
+                  </div>
+                  <div className="admin-customer-row">
+                    <span className="admin-customer-k">Phone</span>
+                    <span className="admin-customer-v">{getCustomer(order).phone || '—'}</span>
+                  </div>
+                </div>
+
+                <div className="admin-customer-card">
+                  <div className="admin-customer-title">Delivery Address</div>
+                  <div className="admin-customer-row">
+                    <span className="admin-customer-k">Address</span>
+                    <span className="admin-customer-v">{fmtAddress(getCustomer(order)) || '—'}</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="order-items">
-                <h4>Items:</h4>
+              <div className="admin-order-items">
+                <h4>Items</h4>
                 {order.items.map((item, idx) => (
-                  <div key={idx} className="order-item">
+                  <div key={idx} className="admin-order-item">
                     <img
-                      src={item.image || item.images?.[0] || placeholderImg}
+                      src={getProductImage(item)}
                       alt={item.name}
-                      className="order-item-image"
-                      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = placeholderImg; }}
+                      className="admin-item-image"
+                      onError={handleImageFallback(PRODUCT_PLACEHOLDER)}
                     />
-                    <div className="order-item-details">
-                      <p className="order-item-name">{item.name}</p>
-                      <p className="order-item-info">Qty: {item.quantity} × ₹{item.price} = ₹{item.quantity * item.price}</p>
+                    <div className="admin-item-details">
+                      <p className="admin-item-name">{item.name}</p>
+                      <p className="admin-item-info">Qty: {item.quantity} × ₹{item.price} = ₹{item.quantity * item.price}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="order-summary">
-                <div className="summary-row">
+              <div className="admin-summary-box">
+                <div className="admin-summary-row">
                   <span>Subtotal</span>
-                  <span>₹{order.subtotal}</span>
+                  <span>₹{order.subtotal || order.summary?.subtotal || 0}</span>
                 </div>
-                <div className="summary-row">
+                <div className="admin-summary-row">
                   <span>Shipping</span>
-                  <span>₹{order.shipping}</span>
+                  <span>₹{order.shippingCharge ?? order.shipping ?? order.summary?.shipping ?? 0}</span>
                 </div>
-                <div className="summary-row total-row">
+                <div className="admin-summary-row total">
                   <span>Total</span>
-                  <span>₹{order.total}</span>
+                  <span>₹{order.total || order.summary?.totalPayable || 0}</span>
                 </div>
+              </div>
+
+              <div className="admin-status-actions">
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Processing')}
+                >
+                  Processing
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Shipped')}
+                >
+                  Shipped
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Out for Delivery')}
+                >
+                  Out for Delivery
+                </button>
+                <button
+                  className="admin-btn admin-btn-success"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Delivered')}
+                >
+                  Delivered
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Return Requested')}
+                >
+                  Return Requested
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Return Approved')}
+                >
+                  Approve Return
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Pickup Scheduled')}
+                >
+                  Schedule Pickup
+                </button>
+                <button
+                  className="admin-btn admin-btn-success"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Refund Initiated')}
+                >
+                  Initiate Refund
+                </button>
+                <button
+                  className="admin-btn admin-btn-success"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Refunded')}
+                >
+                  Mark Refunded
+                </button>
+                <button
+                  className="admin-btn admin-btn-danger"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Return Rejected')}
+                >
+                  Reject Return
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Returned')}
+                >
+                  Returned
+                </button>
+                <button
+                  className="admin-btn admin-btn-danger"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Cancelled')}
+                >
+                  Cancelled
+                </button>
               </div>
             </div>
           ))}

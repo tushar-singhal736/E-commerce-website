@@ -2,21 +2,57 @@
 node_modules/
 /.pnp
 .pnp.js
+package-lock.json
+yarn.lock
 
-# Testing
-/coverage
-
-# Production
-/build
-
-# Misc
-.DS_Store
+# Environment variables (IMPORTANT - Never commit credentials)
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*.local
 
+# Testing
+/coverage
+.nyc_output/
+
+# Production
+/build
+/dist
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Temp files
+tmp/
+temp/
+*.tmp
+
+# Database backups
+*.backup
+*.bak
 

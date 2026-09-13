@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cpn_1",
+    "code": "SUPERNOVA10",
+    "percent": 10,
+    "minOrderAmount": 0,
+    "maxUses": null,
+    "usedCount": 0,
+    "active": true,
+    "expiresAt": null,
+    "description": "10% off on all orders",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "cpn_2",
+    "code": "WELCOME15",
+    "percent": 15,
+    "minOrderAmount": 500,
+    "maxUses": 100,
+    "usedCount": 0,
+    "active": true,
+    "expiresAt": null,
+    "description": "15% off for new shoppers (min ₹500)",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "cpn_3",
+    "code": "FESTIVE20",
+    "percent": 20,
+    "minOrderAmount": 1000,
+    "maxUses": 50,
+    "usedCount": 0,
+    "active": true,
+    "expiresAt": null,
+    "description": "Festive sale — 20% off (min ₹1000)",
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  }
+]

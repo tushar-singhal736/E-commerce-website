@@ -1,21 +1,567 @@
-// Fetch products from backend API
-export const getProducts = async () => {
+import API_BASE_URL, { parseApiResponse } from '../utils/api';
+
+export const products = [
+  {
+    "id": 1,
+    "name": "Women's Summer Dress",
+    "price": 99,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800"
+    ],
+    "description": "Beautiful summer dress for women",
+    "rating": 4.7,
+    "reviews": [],
+    "stock": 20
+  },
+  {
+    "id": 2,
+    "name": "Women's Handbag",
+    "price": 249,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+    ],
+    "description": "Elegant leather handbag",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 3,
+    "name": "Women's Jeans",
+    "price": 189,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+    ],
+    "description": "Comfortable fit jeans",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 51
+  },
+  {
+    "id": 4,
+    "name": "Women's Trowsers",
+    "price": 129,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"
+    ],
+    "description": "Stylish trowsers for office",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 5,
+    "name": "Men's T-Shirt",
+    "price": 99,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+    ],
+    "description": "Classic cotton t-shirt",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 6,
+    "name": "Men's Jeans",
+    "price": 299,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800"
+    ],
+    "description": "Slim fit denim jeans",
+    "rating": 5,
+    "reviews": [],
+    "stock": 49
+  },
+  {
+    "id": 7,
+    "name": "Men's Jacket",
+    "price": 299,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800"
+    ],
+    "description": "Warm winter jacket",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 8,
+    "name": "Men's Shirt",
+    "price": 149,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1603252109303-2751441dd157?w=800"
+    ],
+    "description": "Formal dress shirt",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 9,
+    "name": "Running Shoes",
+    "price": 499,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800"
+    ],
+    "description": "Comfortable running shoes",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 10,
+    "name": "Casual Sneakers",
+    "price": 499,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800"
+    ],
+    "description": "Stylish casual sneakers",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 11,
+    "name": "High Heels",
+    "price": 799,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+    ],
+    "description": "Elegant high heel shoes",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 12,
+    "name": "Boots",
+    "price": 399,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1605812860427-4024433a70fd?w=800"
+    ],
+    "description": "Leather boots",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 13,
+    "name": "Gold Necklace",
+    "price": 899,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800"
+    ],
+    "description": "Beautiful gold necklace",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 14,
+    "name": "Silver Ring",
+    "price": 149,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800"
+    ],
+    "description": "Elegant silver ring",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 15,
+    "name": "Diamond Earrings",
+    "price": 999,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=800"
+    ],
+    "description": "Sparkling diamond earrings",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 16,
+    "name": "Bracelet",
+    "price": 129,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800"
+    ],
+    "description": "Charming bracelet",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 17,
+    "name": "Wireless Headphones",
+    "price": 449,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800"
+    ],
+    "description": "Premium wireless headphones",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 18,
+    "name": "Smart Watch",
+    "price": 799,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800"
+    ],
+    "description": "Feature-rich smartwatch",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 19,
+    "name": "Bluetooth Speaker",
+    "price": 249,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800"
+    ],
+    "description": "Portable Bluetooth speaker",
+    "rating": 4,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 20,
+    "name": "Phone Case",
+    "price": 499,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=800"
+    ],
+    "description": "Protective phone case",
+    "rating": 5,
+    "reviews": [],
+    "stock": 50
+  },
+  {
+    "id": 21,
+    "name": "iPhone 17",
+    "price": 82900,
+    "category": "electronics",
+    "images": [
+      "https://rukminim2.flixcart.com/image/1536/1536/xif0q/mobile/p/x/y/-original-imahft5gkyd8wcqc.jpeg?q=90"
+    ],
+    "description": "Latest iPhone with advanced camera and performance",
+    "rating": 4.9,
+    "reviews": [],
+    "stock": 25
+  },
+  {
+    "id": 22,
+    "name": "Samsung Galaxy S26",
+    "price": 114999,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800"
+    ],
+    "description": "Flagship Android smartphone with stunning display",
+    "rating": 4.8,
+    "reviews": [],
+    "stock": 30
+  },
+  {
+    "id": 23,
+    "name": "Google Pixel Pro",
+    "price": 99999,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=800"
+    ],
+    "description": "AI powered camera phone with clean Android experience",
+    "rating": 4.7,
+    "reviews": [],
+    "stock": 35
+  },
+  {
+    "id": 24,
+    "name": "Nike Air Zoom Shoes",
+    "price": 6999,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=800"
+    ],
+    "description": "High comfort running shoes for daily workouts",
+    "rating": 4.6,
+    "reviews": [],
+    "stock": 60
+  },
+  {
+    "id": 25,
+    "name": "Adidas Ultraboost",
+    "price": 8999,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800"
+    ],
+    "description": "Premium sneakers with responsive cushioning",
+    "rating": 4.7,
+    "reviews": [],
+    "stock": 55
+  },
+  {
+    "id": 26,
+    "name": "Puma Street Runner",
+    "price": 4599,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=800"
+    ],
+    "description": "Trendy street style shoes with lightweight design",
+    "rating": 4.4,
+    "reviews": [],
+    "stock": 70
+  },
+  {
+    "id": 27,
+    "name": "Men's Leather Wallet",
+    "price": 1299,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1627123424574-724758594e93?w=800"
+    ],
+    "description": "Classic genuine leather wallet with multiple slots",
+    "rating": 4.3,
+    "reviews": [],
+    "stock": 80
+  },
+  {
+    "id": 28,
+    "name": "Men's Formal Blazer",
+    "price": 4299,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=800"
+    ],
+    "description": "Sharp fit blazer for meetings and events",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 45
+  },
+  {
+    "id": 29,
+    "name": "Women's Party Gown",
+    "price": 3599,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800"
+    ],
+    "description": "Elegant party wear gown with premium fabric",
+    "rating": 4.6,
+    "reviews": [],
+    "stock": 40
+  },
+  {
+    "id": 30,
+    "name": "Women's Kurti Set",
+    "price": 1899,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800"
+    ],
+    "description": "Stylish ethnic kurti set for festive occasions",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 65
+  },
+  {
+    "id": 31,
+    "name": "Gaming Laptop Pro 16",
+    "price": 154999,
+    "category": "electronics",
+    "images": [
+      "https://picsum.photos/seed/gaming-laptop-pro-16/800/600"
+    ],
+    "description": "High performance gaming laptop with RTX graphics",
+    "rating": 4.8,
+    "reviews": [],
+    "stock": 20
+  },
+  {
+    "id": 32,
+    "name": "4K Smart TV 55 inch",
+    "price": 56999,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800"
+    ],
+    "description": "Ultra HD smart TV with streaming apps support",
+    "rating": 4.6,
+    "reviews": [],
+    "stock": 28
+  },
+  {
+    "id": 33,
+    "name": "Wireless Earbuds X",
+    "price": 3499,
+    "category": "electronics",
+    "images": [
+      "https://picsum.photos/seed/wireless-earbuds-x/800/600"
+    ],
+    "description": "True wireless earbuds with noise cancellation",
+    "rating": 4.4,
+    "reviews": [],
+    "stock": 75
+  },
+  {
+    "id": 34,
+    "name": "Mechanical Keyboard RGB",
+    "price": 4999,
+    "category": "electronics",
+    "images": [
+      "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800"
+    ],
+    "description": "Tactile mechanical keyboard with RGB lighting",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 52
+  },
+  {
+    "id": 35,
+    "name": "Men's Sports Watch",
+    "price": 2999,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=800"
+    ],
+    "description": "Rugged waterproof watch for active lifestyle",
+    "rating": 4.3,
+    "reviews": [],
+    "stock": 58
+  },
+  {
+    "id": 36,
+    "name": "Women's Tote Bag",
+    "price": 2199,
+    "category": "women",
+    "images": [
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800"
+    ],
+    "description": "Spacious tote bag for office and travel",
+    "rating": 4.4,
+    "reviews": [],
+    "stock": 62
+  },
+  {
+    "id": 37,
+    "name": "Silver Chain Set",
+    "price": 2799,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800"
+    ],
+    "description": "Premium sterling silver chain with pendant",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 36
+  },
+  {
+    "id": 38,
+    "name": "Rose Gold Bracelet",
+    "price": 3399,
+    "category": "jewellery",
+    "images": [
+      "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800"
+    ],
+    "description": "Minimal rose gold bracelet for daily wear",
+    "rating": 4.6,
+    "reviews": [],
+    "stock": 42
+  },
+  {
+    "id": 39,
+    "name": "Travel Backpack 30L",
+    "price": 2599,
+    "category": "men",
+    "images": [
+      "https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?w=800"
+    ],
+    "description": "Durable backpack with laptop compartment",
+    "rating": 4.4,
+    "reviews": [],
+    "stock": 68
+  },
+  {
+    "id": 40,
+    "name": "Women's White Sneakers",
+    "price": 3799,
+    "category": "shoes",
+    "images": [
+      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+    ],
+    "description": "Clean and comfy sneakers for everyday style",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 57
+  },
+  {
+    "id": 41,
+    "name": "APPLE iPhone 17 Pro Max (Cosmic Orange, 256 GB)",
+    "price": 149900,
+    "category": "electronics",
+    "images": [
+      "https://rukminim2.flixcart.com/image/1536/1536/xif0q/mobile/f/v/m/-original-imahft6chnx2vbuy.jpeg?q=90"
+    ],
+    "description": "256 GB ROM \nA19 Chip, 6 Core Processor | Hexa Core\nSuperfast Multitasking. Extensive Gaming\n48MP + 48MP + 48MP Rear Camera\nDSLR Like Pictures & Great Zoom\n18MP Front Camera\n6.9 inch All Screen OLED Display\nCinematic Display. Sharpest Colours",
+    "rating": 4.5,
+    "reviews": [],
+    "stock": 10
+  }
+];
+
+export const getProducts = async ({ limit = 500, page = 1 } = {}) => {
   try {
-    // FIX: Port badal kar 5005 kar diya gaya hai
-    const response = await fetch('http://localhost:5005/api/products');
-    
+    const response = await fetch(`${API_BASE_URL}/api/products?limit=${limit}&page=${page}`);
     if (!response.ok) {
-        throw new Error("Server response was not ok");
+      throw new Error('Server response was not ok');
     }
 
-    const data = await response.json();
-    console.log("Products loaded successfully:", data);
-    return data;
+    const payload = await parseApiResponse(response);
+    const items = Array.isArray(payload) ? payload : payload.items || [];
+    return items.length > 0 ? items : products;
   } catch (err) {
-    console.error('Failed to fetch products from Port 5005:', err);
-    return [];
+    console.warn('Backend products unavailable, using local products fallback.', err);
+    return products;
   }
 };
 
-// Keep this for backward compatibility
-export const products = [];
+export const getProductById = async (id) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
+    if (!response.ok) {
+      throw new Error('Product request failed');
+    }
+    const payload = await parseApiResponse(response);
+    return payload;
+  } catch (err) {
+    console.warn('Backend product detail unavailable, using local product fallback.', err);
+    return products.find((product) => Number(product.id) === Number(id)) || null;
+  }
+};

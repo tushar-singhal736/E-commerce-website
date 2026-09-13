@@ -27,21 +27,30 @@
   --nav-text: #ffffff;
 }
 
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+body,
+.navbar,
+.card,
+.product-card,
+.product-card-home,
+.category-card,
+.order-card,
+.profile-card,
+.detail-card {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 html, body {
   margin: 0 !important;
   padding: 0 !important;
   width: 100%;
-  height: 100%;
-  /* Navbar ke upar wali space ko khatam karne ke liye */
-  overflow-x: hidden; 
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
 #root {
-  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .App {
@@ -51,8 +60,6 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
-  /* Yeh line navbar ke upar ki space ko fix karegi */
-  vertical-align: baseline; 
 }
 
 /* 2. Beech ka content area (Jo navbar aur footer ko door rakhega) */
@@ -60,6 +67,23 @@ main, .content-area, .routes-wrapper {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
+}
+
+/* Navbar sticky fix */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+}
+
+/* Footer should always stay below content */
+.footer {
+  position: relative;
+}
+
+/* Fixed spacing to keep footer out of the page flow if nested incorrectly */
+body > #root > .App > .footer {
+  margin-top: auto;
 }
 
 /* 3. Navbar Fix (Taki upar koi gap na rahe) */
@@ -72,7 +96,65 @@ nav {
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Add-to-cart toast */
+.app-toast {
+  position: fixed;
+  top: 84px;
+  right: 16px;
+  z-index: 9999;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(17, 24, 39, 0.92);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(6px);
+  animation: slideIn 0.3s ease, slideOut 0.3s ease 4.7s forwards;
+}
+
+.app-toast--success {
+  background: rgba(34, 197, 94, 0.92);
+  color: #fff;
+}
+
+.app-toast--error {
+  background: rgba(239, 68, 68, 0.92);
+  color: #fff;
+}
+
+.app-toast--warning {
+  background: rgba(217, 119, 6, 0.92);
+  color: #fff;
+}
+
+.toast-icon {
+  margin-right: 6px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 a, .nav-link, .footer-section ul li a {
   color: var(--primary-color);
