@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getProductImage, handleImageFallback, PRODUCT_PLACEHOLDER } from '../utils/productImages';
 import './Cart.css';
 
-function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0, activeCoupon, applyCoupon, removeCoupon }) {
+function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0, activeCoupon, couponPercent = 0, applyCoupon, removeCoupon }) {
   const [couponCode, setCouponCode] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
   const navigate = useNavigate();
@@ -13,8 +13,9 @@ function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0, activ
   };
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = 50;
+  const appliedPercent = activeCoupon && couponPercent > 0 ? couponPercent : discountPercent;
 
-  const discountAmount = (total * discountPercent) / 100;
+  const discountAmount = (total * appliedPercent) / 100;
   const finalTotal = total + shipping - discountAmount;
 
   if (cart.length === 0) {
@@ -83,9 +84,9 @@ function Cart({ cart, removeFromCart, updateQuantity, discountPercent = 0, activ
               <span>Subtotal:</span>
               <span>₹{total.toFixed(2)}</span>
             </div>
-            {discountPercent > 0 && (
+            {(discountPercent > 0 || (activeCoupon && couponPercent > 0)) && (
               <div className="summary-row">
-                <span>Auto‑applied Discount ({discountPercent}%)</span>
+                <span>{activeCoupon && couponPercent > 0 ? `Coupon applied (${activeCoupon})` : `Auto‑applied Discount (${discountPercent}%)`}</span>
                 <span className="discount-value">-₹{discountAmount.toFixed(2)}</span>
               </div>
             )}

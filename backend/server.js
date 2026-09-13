@@ -5,6 +5,7 @@ const path = require("path");
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
 const rateLimit = require("express-rate-limit");
+const nodemailer = require("nodemailer");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = express();
@@ -17,13 +18,13 @@ const allowedOrigins = IS_PRODUCTION
     : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001'];
 
 if (IS_PRODUCTION && allowedOrigins.length === 0) {
-    console.warn('⚠️ No FRONTEND_URL or ADMIN_URL configured for production CORS. Allowing all origins.');
+    throw new Error('FRONTEND_URL or ADMIN_URL must be configured in production.');
 }
 
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
-        if (!IS_PRODUCTION || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        if (!IS_PRODUCTION || allowedOrigins.includes(origin)) {
             return callback(null, true);
         }
         return callback(new Error('CORS origin denied'), false);
@@ -94,6 +95,10 @@ const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const EMAIL_SERVICE = String(process.env.EMAIL_SERVICE || "gmail").trim();
+const EMAIL_USER = String(process.env.EMAIL_USER || "").trim();
+const EMAIL_PASS = String(process.env.EMAIL_PASS || "").trim();
+const EMAIL_FROM = String(process.env.EMAIL_FROM || EMAIL_USER).trim();
 const configuredUseMongo = String(process.env.USE_MONGO ?? "").trim().toLowerCase();
 const USE_MONGO = configuredUseMongo === "true" || (configuredUseMongo === "" && Boolean(process.env.MONGODB_URI));
 const db = require("./db");
@@ -117,6 +122,7 @@ if (!hasRazorpayKeys) {
 
 const USERS_FILE = path.join(__dirname, "users.json");
 const SESSIONS_FILE = path.join(__dirname, "sessions.json");
+const passwordResetRequests = new Map();
 
 const JSON_COLLECTION_MAP = new Map([
     [USERS_FILE, 'users'],
@@ -269,7 +275,7 @@ const normalizeCouponCode = (code) =>
     String(code || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "");
 
 const readCouponsRaw = async () => {
-    if (USE_MONGO) {
+    if (shouldUseMongo()) {
         const coupons = await db.getAll('coupons');
         return Array.isArray(coupons) ? coupons : [];
     }
@@ -379,8 +385,12 @@ const normalizeCouponInput = (body = {}, existing = null) => {
 };
 
 // ============ AUTH STORAGE HELPERS ============
-const ADMIN_EMAIL = normalizeEmail(process.env.ADMIN_EMAIL || "admin@supernova.com");
-const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || "admin123");
+const ADMIN_EMAIL = normalizeEmail(process.env.ADMIN_EMAIL || (IS_PRODUCTION ? "" : "admin@supernova.com"));
+const ADMIN_PASSWORD = String(process.env.ADMIN_PASSWORD || (IS_PRODUCTION ? "" : "admin123"));
+
+if (IS_PRODUCTION && (!ADMIN_EMAIL || !ADMIN_PASSWORD || ADMIN_PASSWORD === "admin123")) {
+    throw new Error("ADMIN_EMAIL and a strong ADMIN_PASSWORD must be configured in production.");
+}
 
 const getSessions = async () => await readData(SESSIONS_FILE) || [];
 const saveSessions = async (sessions) => await writeData(SESSIONS_FILE, sessions);
@@ -427,6 +437,15 @@ const getBearerToken = (req) => {
     if (auth.startsWith("Bearer ")) return auth.slice(7).trim();
     return null;
 };
+
+const getEmailTransporter = () => {
+    if (!EMAIL_USER || !EMAIL_PASS) return null;
+    return nodemailer.createTransport({
+        service: EMAIL_SERVICE,
+        auth: { user: EMAIL_USER, pass: EMAIL_PASS },
+    });
+};
+
 
 // Middleware: Verify admin session token
 const verifyAdmin = async (req, res, next) => {
@@ -488,6 +507,24 @@ const getCleanProductImages = (product) => {
     return images.length ? [...new Set(images)] : [PRODUCT_PLACEHOLDER_IMAGE];
 };
 
+const validateProductInput = (body = {}, existing = null) => {
+    const name = String(body.name ?? existing?.name ?? '').trim();
+    const category = String(body.category ?? existing?.category ?? '').trim();
+    const description = String(body.description ?? existing?.description ?? '').trim();
+    const price = Number(body.price ?? existing?.price);
+    const stock = Number(body.stock ?? existing?.stock);
+    const images = getCleanProductImages(body.images !== undefined ? body : existing || body);
+
+    if (!name || name.length > 160) return { error: 'Product name is required and must be under 160 characters.' };
+    if (!category || category.length > 80) return { error: 'Product category is required and must be under 80 characters.' };
+    if (!Number.isFinite(price) || price < 0) return { error: 'Product price must be a non-negative number.' };
+    if (!Number.isInteger(stock) || stock < 0) return { error: 'Product stock must be a non-negative integer.' };
+    if (description.length > 5000) return { error: 'Product description is too long.' };
+    if (images.some((image) => !/^https?:\/\//i.test(image))) return { error: 'Product images must use valid HTTP(S) URLs.' };
+
+    return { value: { name, category, description, price, stock, images } };
+};
+
 const normalizeProduct = (product) => {
     const images = getCleanProductImages(product);
     return {
@@ -508,6 +545,12 @@ const isCancellableStatus = (status) => [
     "pending - cash on delivery"
 ].includes(normalizeStatus(status));
 const isDeliveredStatus = (status) => normalizeStatus(status) === "delivered";
+const RETURN_WINDOW_DAYS = 7;
+const isWithinReturnWindow = (order) => {
+    const deliveredAt = new Date(order.deliveredAt || order.statusUpdatedAt || order.orderDate);
+    if (Number.isNaN(deliveredAt.getTime())) return false;
+    return Date.now() - deliveredAt.getTime() <= RETURN_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+};
 
 const restoreStockForOrder = async (order) => {
     if (order.inventoryRestoredAt) return order.inventoryRestoredAt;
@@ -647,17 +690,16 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     }
 
     if (normalizedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        const adminUser = {
-            id: "admin",
-            fullName: "SuperNova Admin",
-            email: ADMIN_EMAIL,
-            phone: "",
-            dateOfBirth: "",
-            role: "admin",
-        };
-        const session = await createSession(adminUser.id);
+        const session = await createSession('admin');
         return successResponse(res, {
-            user: sanitizeUser(adminUser),
+            user: {
+                id: 'admin',
+                fullName: 'SuperNova Admin',
+                email: ADMIN_EMAIL,
+                phone: '',
+                dateOfBirth: '',
+                role: 'admin',
+            },
             token: session.token,
         });
     }
@@ -675,24 +717,70 @@ app.post("/api/auth/login", authLimiter, async (req, res) => {
     });
 });
 
+app.post("/api/auth/logout", verifyUser, async (req, res) => {
+    const token = getBearerToken(req);
+    const sessions = await getSessions();
+    await saveSessions(sessions.filter((session) => session.token !== token));
+    return successResponse(res, { message: "Logged out successfully." });
+});
+
+app.post("/api/auth/request-reset", authLimiter, async (req, res) => {
+    const normalizedEmail = normalizeEmail(req.body?.email);
+    const genericResponse = { message: "If an account exists, a reset code has been sent." };
+    if (!normalizedEmail) return successResponse(res, genericResponse);
+
+    const users = await getUsers();
+    const userExists = users.some((user) => normalizeEmail(user.email) === normalizedEmail);
+    if (!userExists) return successResponse(res, genericResponse);
+
+    const code = String(crypto.randomInt(100000, 1000000));
+    passwordResetRequests.set(normalizedEmail, {
+        codeHash: crypto.createHash('sha256').update(code).digest('hex'),
+        expiresAt: Date.now() + 10 * 60 * 1000,
+        attempts: 0,
+    });
+
+    const transporter = getEmailTransporter();
+    if (transporter) {
+        await transporter.sendMail({
+            from: EMAIL_FROM,
+            to: normalizedEmail,
+            subject: "SuperNova password reset code",
+            text: `Your SuperNova password reset code is ${code}. It expires in 10 minutes.`,
+        });
+    }
+
+    return successResponse(res, {
+        ...genericResponse,
+        ...(IS_PRODUCTION || transporter ? {} : { developmentCode: code }),
+    });
+});
+
 app.post("/api/auth/reset-password", authLimiter, async (req, res) => {
-    const { email, password } = req.body || {};
+    const { email, resetCode, password } = req.body || {};
     const normalizedEmail = normalizeEmail(email);
 
-    if (!normalizedEmail || !password || password.length < 6) {
-        return errorResponse(res, 400, "Please provide a valid email and new password (min 6 chars).", "AUTH_INVALID_INPUT");
+    if (!normalizedEmail || !/^\d{6}$/.test(String(resetCode || '')) || !password || password.length < 6) {
+        return errorResponse(res, 400, "Please provide the 6-digit reset code and a new password (min 6 chars).", "AUTH_INVALID_INPUT");
     }
 
     const users = await getUsers();
     const idx = users.findIndex((user) => normalizeEmail(user.email) === normalizedEmail);
-    if (idx === -1) {
-        return errorResponse(res, 404, "No user found with this email.", "AUTH_USER_NOT_FOUND");
+    const request = passwordResetRequests.get(normalizedEmail);
+    const codeHash = crypto.createHash('sha256').update(String(resetCode)).digest('hex');
+    if (idx === -1 || !request || request.expiresAt < Date.now() || request.attempts >= 5 || request.codeHash !== codeHash) {
+        if (request) request.attempts += 1;
+        return errorResponse(res, 401, "Invalid or expired reset code.", "AUTH_RESET_CODE_INVALID");
     }
 
     const { hash, salt } = hashPassword(password);
     users[idx].passwordHash = hash;
     users[idx].passwordSalt = salt;
     await saveUsers(users);
+    passwordResetRequests.delete(normalizedEmail);
+
+    const sessions = await getSessions();
+    await saveSessions(sessions.filter((session) => session.userId !== users[idx].id));
 
     return successResponse(res, { message: "Password reset successful." });
 });
@@ -1051,17 +1139,19 @@ app.post("/api/recommendations", apiLimiter, async (req, res) => {
 app.post("/api/admin/products", adminLimiter, verifyAdmin, async (req, res) => {
     try {
         const products = await readData(PRODUCTS_FILE);
+        const validation = validateProductInput(req.body);
+        if (validation.error) return errorResponse(res, 400, validation.error, "INVALID_PRODUCT");
         const maxId = (Array.isArray(products) ? products : []).reduce((max, p) => Math.max(max, Number(p.id) || 0), 0);
         const newProduct = {
             id: maxId + 1,
-            name: req.body.name || "Untitled Product",
-            price: Number(req.body.price) || 0,
-            category: req.body.category || "electronics",
-            images: getCleanProductImages(req.body),
-            description: req.body.description || "",
+            name: validation.value.name,
+            price: validation.value.price,
+            category: validation.value.category,
+            images: validation.value.images,
+            description: validation.value.description,
             rating: Number(req.body.rating) || 0,
             reviews: Array.isArray(req.body.reviews) ? req.body.reviews : [],
-            stock: Number(req.body.stock) || 0
+            stock: validation.value.stock
         };
         newProduct.image = newProduct.images[0];
 
@@ -1086,14 +1176,19 @@ app.put("/api/admin/products/:id", adminLimiter, verifyAdmin, async (req, res) =
         }
 
         const existing = products[index];
+        const validation = validateProductInput(req.body, existing);
+        if (validation.error) return errorResponse(res, 400, validation.error, "INVALID_PRODUCT");
         const updatedProduct = {
             ...existing,
             ...req.body,
             id: existing.id,
-            price: req.body.price !== undefined ? Number(req.body.price) : existing.price,
-            stock: req.body.stock !== undefined ? Number(req.body.stock) : existing.stock,
+            name: validation.value.name,
+            price: validation.value.price,
+            category: validation.value.category,
+            description: validation.value.description,
+            stock: validation.value.stock,
             rating: req.body.rating !== undefined ? Number(req.body.rating) : existing.rating,
-            images: Array.isArray(req.body.images) ? getCleanProductImages(req.body) : getCleanProductImages(existing),
+            images: validation.value.images,
             reviews: Array.isArray(req.body.reviews) ? req.body.reviews : existing.reviews
         };
         updatedProduct.image = updatedProduct.images[0];
@@ -1128,19 +1223,68 @@ app.delete("/api/admin/products/:id", adminLimiter, verifyAdmin, async (req, res
     }
 });
 
+const calculateOrderQuote = async (requestedItems, requestedCouponCode = '') => {
+    const products = await readData(PRODUCTS_FILE);
+    const inventory = Array.isArray(products) ? products : [];
+    if (!Array.isArray(requestedItems) || requestedItems.length === 0) {
+        return { ok: false, status: 400, error: 'Order must contain at least one item', code: 'EMPTY_ORDER' };
+    }
+
+    const quantities = new Map();
+    for (const item of requestedItems) {
+        const productId = Number(item?.id);
+        const quantity = Number(item?.quantity);
+        if (!Number.isInteger(productId) || !Number.isInteger(quantity) || quantity < 1) {
+            return { ok: false, status: 400, error: 'Invalid product or quantity', code: 'INVALID_QUANTITY' };
+        }
+        quantities.set(productId, (quantities.get(productId) || 0) + quantity);
+    }
+
+    const items = [];
+    for (const [productId, quantity] of quantities) {
+        const product = inventory.find((candidate) => Number(candidate.id) === productId);
+        if (!product) return { ok: false, status: 404, error: `Product ${productId} not found in inventory`, code: 'PRODUCT_NOT_FOUND' };
+        const availableStock = Number(product.stock) || 0;
+        if (quantity > availableStock) {
+            return { ok: false, status: 400, error: `Insufficient stock for ${product.name}. Available: ${availableStock}, Requested: ${quantity}`, code: 'INSUFFICIENT_STOCK' };
+        }
+        items.push({ id: product.id, name: product.name, price: Number(product.price) || 0, quantity });
+    }
+
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const couponCode = normalizeCouponCode(requestedCouponCode);
+    let discountPercent = Number((await readSettings()).discountPercent) || 0;
+    if (couponCode) {
+        const coupon = await findCouponByCode(couponCode);
+        const couponCheck = validateCouponRecord(coupon, subtotal);
+        if (!couponCheck.valid) return { ok: false, status: 400, error: couponCheck.error, code: couponCheck.code };
+        if (discountPercent <= 0) discountPercent = Number(coupon.percent) || 0;
+    }
+
+    const shippingCharge = 50;
+    const discountAmount = Math.round((subtotal * Math.min(90, Math.max(0, discountPercent))) / 100);
+    return {
+        ok: true,
+        items,
+        subtotal,
+        shippingCharge,
+        discountPercent,
+        discountAmount,
+        total: subtotal + shippingCharge - discountAmount,
+        couponCode,
+    };
+};
+
 // 2️⃣ Create Razorpay Order
-app.post("/api/create-order", apiLimiter, async (req, res) => {
+app.post("/api/create-order", apiLimiter, verifyUser, async (req, res) => {
     if (!hasRazorpayKeys || !razorpay) {
         return errorResponse(res, 503, "Payment gateway not configured", "RAZORPAY_NOT_CONFIGURED");
     }
 
     try {
-        const { amount } = req.body;
-        const amountInPaise = Math.round(Number(amount) * 100);
-
-        if (!amountInPaise || amountInPaise <= 0) {
-            return errorResponse(res, 400, "Invalid amount", "INVALID_AMOUNT");
-        }
+        const quote = await calculateOrderQuote(req.body?.items, req.body?.couponCode || req.body?.activeCoupon);
+        if (!quote.ok) return errorResponse(res, quote.status, quote.error, quote.code);
+        const amountInPaise = Math.round(quote.total * 100);
 
         const options = {
             amount: amountInPaise,
@@ -1149,7 +1293,7 @@ app.post("/api/create-order", apiLimiter, async (req, res) => {
         };
 
         const order = await razorpay.orders.create(options);
-        return successResponse(res, { ...order, keyId: RAZORPAY_KEY_ID });
+        return successResponse(res, { ...order, keyId: RAZORPAY_KEY_ID, quote });
 
     } catch (error) {
         console.error(error);
@@ -1158,49 +1302,119 @@ app.post("/api/create-order", apiLimiter, async (req, res) => {
 });
 
 // 3️⃣ Save Order After Payment
-app.post("/api/orders", apiLimiter, async (req, res) => {
+app.post("/api/orders", apiLimiter, verifyUser, async (req, res) => {
     try {
+        const requestedPaymentId = String(req.body?.paymentId || '');
+        if (requestedPaymentId) {
+            const existingOrders = await readData(ORDERS_FILE);
+            const existingOrder = (Array.isArray(existingOrders) ? existingOrders : []).find(
+                (order) => String(order.paymentId || '') === requestedPaymentId
+            );
+            if (existingOrder) return successResponse(res, existingOrder);
+        }
+
         const products = await readData(PRODUCTS_FILE);
-        const items = Array.isArray(req.body.items) ? req.body.items : [];
+        const requestedItems = Array.isArray(req.body.items) ? req.body.items : [];
+        const inventory = Array.isArray(products) ? products : [];
+
+        if (requestedItems.length === 0) {
+            return errorResponse(res, 400, "Order must contain at least one item", "EMPTY_ORDER");
+        }
+
+        const items = [];
         
         // Validate stock for all items
-        for (const item of items) {
-            const product = (Array.isArray(products) ? products : []).find(p => Number(p.id) === Number(item.id));
+        for (const item of requestedItems) {
+            const product = inventory.find(p => Number(p.id) === Number(item.id));
             if (!product) {
                 return errorResponse(res, 404, `Product ${item.name || item.id} not found in inventory`, "PRODUCT_NOT_FOUND");
             }
             
             const availableStock = Number(product.stock) || 0;
-            const requestedQty = Number(item.quantity) || 0;
+            const requestedQty = Number(item.quantity);
+            if (!Number.isInteger(requestedQty) || requestedQty < 1) {
+                return errorResponse(res, 400, `Invalid quantity for ${product.name || product.id}`, "INVALID_QUANTITY");
+            }
             
             if (requestedQty > availableStock) {
                 return errorResponse(res, 400, `Insufficient stock for ${item.name || item.id}. Available: ${availableStock}, Requested: ${requestedQty}`, "INSUFFICIENT_STOCK");
             }
+
+            items.push({
+                ...item,
+                id: product.id,
+                name: product.name,
+                price: Number(product.price) || 0,
+                quantity: requestedQty,
+            });
         }
         
         const orders = await readData(ORDERS_FILE);
-        const incomingStatus = req.body.status;
         const incomingPaymentMethod = normalizeText(req.body.paymentMethod);
-        const resolvedStatus =
-            incomingStatus ||
-            (["cod", "cash on delivery"].includes(incomingPaymentMethod) ? "Pending" : "Success");
+        const resolvedStatus = ["cod", "cash on delivery"].includes(incomingPaymentMethod) ? "Pending" : "Paid";
 
         const orderSubtotal = items.reduce(
             (sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 1),
             0
         );
         const couponCode = normalizeCouponCode(req.body.couponCode || req.body.activeCoupon);
+        let appliedDiscountPercent = Number((await readSettings()).discountPercent) || 0;
         if (couponCode) {
             const coupon = await findCouponByCode(couponCode);
             const couponCheck = validateCouponRecord(coupon, orderSubtotal);
             if (!couponCheck.valid) {
                 return errorResponse(res, 400, couponCheck.error, couponCheck.code);
             }
+            if (appliedDiscountPercent <= 0) {
+                appliedDiscountPercent = Number(coupon.percent) || 0;
+            }
         }
+
+        const shippingCharge = 50;
+        const discountAmount = Math.round((orderSubtotal * Math.min(90, Math.max(0, appliedDiscountPercent))) / 100);
+        const calculatedTotal = orderSubtotal + shippingCharge - discountAmount;
+
+        if (!['cod', 'cash on delivery'].includes(incomingPaymentMethod)) {
+            const paymentId = String(req.body.paymentId || '');
+            const paymentOrderId = String(req.body.paymentOrderId || '');
+            const paymentSignature = String(req.body.paymentSignature || '');
+            if (!hasRazorpayKeys || !paymentId || !paymentOrderId || !paymentSignature) {
+                return errorResponse(res, 400, "Payment verification details are required", "PAYMENT_VERIFICATION_REQUIRED");
+            }
+            const expectedSignature = crypto
+                .createHmac('sha256', RAZORPAY_KEY_SECRET)
+                .update(`${paymentOrderId}|${paymentId}`)
+                .digest('hex');
+            const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
+            const receivedBuffer = Buffer.from(paymentSignature, 'utf8');
+            if (expectedBuffer.length !== receivedBuffer.length || !crypto.timingSafeEqual(expectedBuffer, receivedBuffer)) {
+                return errorResponse(res, 400, "Payment verification failed", "PAYMENT_VERIFICATION_FAILED");
+            }
+            try {
+                const gatewayOrder = await razorpay.orders.fetch(paymentOrderId);
+                if (Number(gatewayOrder.amount) !== Math.round(calculatedTotal * 100) || gatewayOrder.currency !== 'INR') {
+                    return errorResponse(res, 400, "Payment amount does not match the order", "PAYMENT_AMOUNT_MISMATCH");
+                }
+            } catch (paymentError) {
+                console.error('Unable to verify Razorpay order amount:', paymentError.message || paymentError);
+                return errorResponse(res, 400, "Unable to verify payment amount", "PAYMENT_AMOUNT_UNVERIFIED");
+            }
+        }
+
+        const authenticatedEmail = normalizeEmail(req.authUser.email);
+        const authenticatedName = req.authUser.fullName || req.authUser.email;
 
         const timestamp = new Date().toISOString();
         const newOrder = {
             ...req.body,
+            items,
+            subtotal: orderSubtotal,
+            shippingCharge,
+            discountPercent: appliedDiscountPercent,
+            discountAmount,
+            total: calculatedTotal,
+            userEmail: authenticatedEmail,
+            userName: authenticatedName,
             orderId: "ORD-" + Date.now(),
             orderDate: req.body.orderDate || timestamp,
             createdAt: req.body.createdAt || timestamp,
@@ -1238,6 +1452,9 @@ app.put("/api/orders/:orderId/cancel", verifyUser, async (req, res) => {
     try {
         const { orderId } = req.params;
         const { reason } = req.body;
+        if (!String(reason || '').trim()) {
+            return errorResponse(res, 400, "Please select a cancellation reason.", "CANCEL_REASON_REQUIRED");
+        }
         const orders = await readData(ORDERS_FILE);
         const index = (Array.isArray(orders) ? orders : []).findIndex((o) => o.orderId === orderId);
 
@@ -1262,8 +1479,10 @@ app.put("/api/orders/:orderId/cancel", verifyUser, async (req, res) => {
         orders[index] = {
             ...order,
             status: "Cancelled",
-            cancelReason: reason || "Cancelled by customer",
+            cancelReason: String(reason).trim(),
             cancelledAt: new Date().toISOString(),
+            refundStatus: normalizeText(order.paymentMethod) === 'cod' ? "Not Applicable" : "Refund Pending",
+            refundAmount: normalizeText(order.paymentMethod) === 'cod' ? 0 : getOrderTotal(order),
             inventoryRestoredAt,
             statusUpdatedAt: new Date().toISOString()
         };
@@ -1280,7 +1499,10 @@ app.put("/api/orders/:orderId/cancel", verifyUser, async (req, res) => {
 app.put("/api/orders/:orderId/return", verifyUser, async (req, res) => {
     try {
         const { orderId } = req.params;
-        const { reason } = req.body;
+        const { reason, note } = req.body;
+        if (!String(reason || '').trim()) {
+            return errorResponse(res, 400, "Please select a return reason.", "RETURN_REASON_REQUIRED");
+        }
         const orders = await readData(ORDERS_FILE);
         const index = (Array.isArray(orders) ? orders : []).findIndex((o) => o.orderId === orderId);
 
@@ -1299,12 +1521,19 @@ app.put("/api/orders/:orderId/return", verifyUser, async (req, res) => {
         if (!isDeliveredStatus(order.status)) {
             return errorResponse(res, 400, `Only Delivered orders can be returned. Current status: ${order.status}`, "ORDER_RETURN_NOT_ALLOWED");
         }
+        if (!isWithinReturnWindow(order)) {
+            return errorResponse(res, 400, `Returns are available within ${RETURN_WINDOW_DAYS} days of delivery.`, "RETURN_WINDOW_EXPIRED");
+        }
 
         orders[index] = {
             ...order,
             status: "Return Requested",
-            returnReason: reason || "Return requested by customer",
+            returnReason: String(reason).trim(),
+            returnNote: String(note || '').trim().slice(0, 1000),
+            returnWindowDays: RETURN_WINDOW_DAYS,
             returnRequestedAt: new Date().toISOString(),
+            refundStatus: normalizeText(order.paymentMethod) === 'cod' ? "Pending Review" : "Pending Review",
+            refundAmount: normalizeText(order.paymentMethod) === 'cod' ? 0 : getOrderTotal(order),
             statusUpdatedAt: new Date().toISOString()
         };
 
@@ -1335,7 +1564,7 @@ app.put("/api/admin/orders/:orderId/status", adminLimiter, verifyAdmin, async (r
     try {
         const { orderId } = req.params;
         const { status } = req.body;
-        const allowedStatuses = ["Pending", "Paid", "Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Return Requested", "Returned", "Success"];
+        const allowedStatuses = ["Pending", "Paid", "Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Return Requested", "Return Approved", "Pickup Scheduled", "Refund Initiated", "Refunded", "Return Rejected", "Returned", "Success"];
 
         if (!status || !allowedStatuses.includes(status)) {
             return errorResponse(res, 400, "Invalid status", "INVALID_STATUS");
@@ -1352,10 +1581,34 @@ app.put("/api/admin/orders/:orderId/status", adminLimiter, verifyAdmin, async (r
         const inventoryRestoredAt = shouldRestoreStock
             ? await restoreStockForOrder(orders[index])
             : orders[index].inventoryRestoredAt;
+        let refundData = {};
+        if (status === "Refund Initiated" && orders[index].paymentId && !orders[index].refundId) {
+            if (hasRazorpayKeys && razorpay && normalizeText(orders[index].paymentMethod) !== 'cod') {
+                try {
+                    const refund = await razorpay.payments.refund(orders[index].paymentId, {
+                        amount: Math.round(getOrderTotal(orders[index]) * 100),
+                        speed: 'normal',
+                        notes: { orderId }
+                    });
+                    refundData = { refundId: refund.id, refundStatus: "Refund Initiated", refundInitiatedAt: new Date().toISOString() };
+                } catch (refundError) {
+                    console.error('Razorpay refund failed:', refundError.message || refundError);
+                    return errorResponse(res, 400, "Razorpay refund could not be initiated. Please retry after checking the payment.", "REFUND_INITIATION_FAILED");
+                }
+            } else {
+                refundData = { refundStatus: "Manual Refund Required", refundInitiatedAt: new Date().toISOString() };
+            }
+        }
 
         orders[index] = {
             ...orders[index],
             status,
+            ...refundData,
+            ...(status === "Return Approved" ? { returnApprovedAt: new Date().toISOString(), refundStatus: "Approved" } : {}),
+            ...(status === "Pickup Scheduled" ? { pickupScheduledAt: new Date().toISOString(), refundStatus: "Pickup Scheduled" } : {}),
+            ...(status === "Refund Initiated" ? { refundInitiatedAt: new Date().toISOString(), refundStatus: "Refund Initiated" } : {}),
+            ...(status === "Refunded" ? { refundedAt: new Date().toISOString(), refundStatus: "Refunded" } : {}),
+            ...(status === "Return Rejected" ? { returnRejectedAt: new Date().toISOString(), refundStatus: "Rejected" } : {}),
             ...(inventoryRestoredAt ? { inventoryRestoredAt } : {}),
             statusUpdatedAt: new Date().toISOString()
         };
@@ -1374,6 +1627,8 @@ app.get("/api/admin/stats", adminLimiter, verifyAdmin, async (req, res) => {
         const products = await readData(PRODUCTS_FILE);
         const orders = await readData(ORDERS_FILE);
         const totalRevenue = (Array.isArray(orders) ? orders : []).reduce((sum, order) => {
+            const status = normalizeStatus(order.status);
+            if (["cancelled", "returned", "return requested", "pending", "pending - cash on delivery"].includes(status)) return sum;
             const directTotal = Number(order.total) || 0;
             const summaryTotal = Number(order.summary?.totalPayable) || 0;
             return sum + (directTotal || summaryTotal);

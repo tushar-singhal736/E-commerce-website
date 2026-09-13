@@ -14,11 +14,6 @@ const getRuntimeApiUrl = () => {
 const API_BASE_URL = isDev ? '' : cleanUrl(process.env.REACT_APP_API_URL || '');
 const API_FALLBACK_URL = getRuntimeApiUrl();
 
-const getStoredAuthToken = () => {
-  if (typeof window === 'undefined') return null;
-  return window.localStorage.getItem('token') || null;
-};
-
 const formatNetworkError = () => (
   isDev
     ? 'Backend server nahi chal raha. Terminal mein "cd backend" phir "npm start" run karein.'
@@ -58,6 +53,11 @@ export const parseApiResponse = async (res) => {
   }
 
   return json.data ?? json;
+};
+
+export const getStoredAuthToken = () => {
+  if (typeof window === 'undefined') return null;
+  return window.localStorage.getItem('token') || null;
 };
 
 export const getAdminHeaders = (extra = {}) => {

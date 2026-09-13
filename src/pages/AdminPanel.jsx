@@ -29,38 +29,67 @@ function AdminPanel({ setToast }) {
   const [editingCouponId, setEditingCouponId] = useState(null);
   const [couponSaving, setCouponSaving] = useState(false);
   const [couponMsg, setCouponMsg] = useState('');
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
 
   const revenueRounded = useMemo(() => {
     const n = Number(stats.totalRevenue) || 0;
     return Math.round(n);
   }, [stats.totalRevenue]);
 
+  const fetchStats = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
+        headers: getAdminHeaders()
+      });
+      const data = await parseApiResponse(res);
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/settings`);
+      const data = await parseApiResponse(res);
+      setDiscountPercent(Number(data?.discountPercent) || 0);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchRecentOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/orders`, {
+        headers: getAdminHeaders(),
+      });
+      const data = await parseApiResponse(res);
+      const orders = Array.isArray(data) ? data : data.items || [];
+      const sortedOrders = (orders || []).sort(
+        (a, b) => new Date(b.createdAt || b.orderDate || 0).getTime() - new Date(a.createdAt || a.orderDate || 0).getTime()
+      );
+      setRecentOrders(sortedOrders.slice(0, 5));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
-          headers: getAdminHeaders()
-        });
-        const data = await parseApiResponse(res);
-        setStats(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchStats();
+    fetchSettings();
   }, []);
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/settings`);
-        const data = await parseApiResponse(res);
-        setDiscountPercent(Number(data?.discountPercent) || 0);
-      } catch (err) {
-        console.error(err);
-      }
+    const refreshPanel = async () => {
+      await Promise.all([fetchStats(), fetchRecentOrders()]);
     };
-    fetchSettings();
+
+    refreshPanel();
+    const intervalId = setInterval(refreshPanel, 8000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const fetchCoupons = async () => {
@@ -163,6 +192,7 @@ function AdminPanel({ setToast }) {
       const data = await parseApiResponse(res);
       setDiscountPercent(Number(data?.discountPercent) || 0);
       setSettingsMsg('Discount updated.');
+      fetchStats();
     } catch (err) {
       console.error(err);
       setSettingsMsg(err.message || 'Discount update failed.');
@@ -215,6 +245,63 @@ function AdminPanel({ setToast }) {
               </div>
               <span className="admin-kpi-subtext">rounded</span>
             </div>
+          </div>
+        </div>
+
+        <div className="admin-card admin-order-preview-card">
+          <div className="admin-card-head">
+            <div className="admin-card-title">
+              <span className="admin-card-icon"><ShoppingBag size={16} /></span>
+              <h3>Recent Orders</h3>
+            </div>
+            <button className="admin-btn-secondary" onClick={fetchRecentOrders} disabled={ordersLoading}>
+              {ordersLoading ? 'Refreshing…' : 'Refresh'}
+            </button>
+          </div>
+          <p className="admin-card-sub">
+            Orders aate hi yahan dikh jayenge. Full order management ke liye button se Admin Orders page par jayein.
+          </p>
+
+          {ordersLoading ? (
+            <p className="admin-info-text">Loading latest orders…</p>
+          ) : recentOrders.length === 0 ? (
+            <div className="admin-empty-state">
+              <h2>No recent orders yet</h2>
+              <p>Customers ka order place karne par yahan entries aa jayengi.</p>
+            </div>
+          ) : (
+            <div className="admin-order-preview-table-wrap">
+              <table className="admin-order-preview-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentOrders.map((order) => (
+                    <tr key={order.orderId}>
+                      <td>{order.orderId}</td>
+                      <td>{order.userEmail || order.customer?.email || 'Guest'}</td>
+                      <td>₹{Number(order.total || order.summary?.totalPayable || 0).toLocaleString('en-IN')}</td>
+                      <td><span className={`admin-pill ${order.status && order.status.toLowerCase().includes('delivered') ? 'pill-green' : order.status && order.status.toLowerCase().includes('cancel') ? 'pill-red' : 'pill-blue'}`}>
+                        {order.status || 'Processing'}
+                      </span></td>
+                      <td>{new Date(order.orderDate || order.createdAt || 0).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="admin-card-footer">
+            <Link to="/admin/orders" className="admin-link-cta">
+              Open Admin Orders <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
 

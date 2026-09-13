@@ -122,10 +122,13 @@
       "discount": 0,
       "totalPayable": 299
     },
-    "status": "Delivered",
+    "status": "Return Requested",
     "createdAt": "2026-03-06T05:03:41.079Z",
     "orderId": "ORD-1772773421136",
-    "orderDate": "6/3/2026, 10:33:41 am"
+    "orderDate": "6/3/2026, 10:33:41 am",
+    "returnReason": "Wrong item delivered - Wrong item delivered",
+    "returnRequestedAt": "2026-08-01T09:24:08.885Z",
+    "statusUpdatedAt": "2026-08-01T09:24:08.885Z"
   },
   {
     "customer": {
@@ -540,10 +543,13 @@
       "discount": 0,
       "totalPayable": 2
     },
-    "status": "Delivered",
+    "status": "Return Requested",
     "createdAt": "2026-03-21T04:08:24.102Z",
     "orderId": "ORD-1774066104110",
-    "orderDate": "21/3/2026, 9:38:24 am"
+    "orderDate": "21/3/2026, 9:38:24 am",
+    "returnReason": "Product damaged / defective - this rpoduct is dmanged ",
+    "returnRequestedAt": "2026-08-01T09:21:54.028Z",
+    "statusUpdatedAt": "2026-08-01T09:21:54.028Z"
   },
   {
     "customer": {
@@ -1628,11 +1634,11 @@
     "paymentStatus": "Pending",
     "orderId": "ORD-1780579683990",
     "orderDate": "2026-06-04T13:28:03.990Z",
-    "status": "Cancelled",
+    "status": "Return Requested",
     "cancelReason": "Changed my mind",
     "cancelledAt": "2026-06-04T13:28:23.486Z",
     "inventoryRestoredAt": "2026-06-04T13:28:23.486Z",
-    "statusUpdatedAt": "2026-06-04T13:28:23.486Z"
+    "statusUpdatedAt": "2026-08-01T09:05:17.319Z"
   },
   {
     "customer": {
@@ -1789,10 +1795,60 @@
     "paymentStatus": "Pending",
     "orderId": "ORD-1781766267253",
     "orderDate": "2026-06-18T07:04:27.253Z",
-    "status": "Cancelled",
+    "status": "Delivered",
     "cancelReason": "Changed my mind",
     "cancelledAt": "2026-06-18T07:05:59.485Z",
     "inventoryRestoredAt": "2026-06-18T07:05:59.485Z",
-    "statusUpdatedAt": "2026-06-18T07:05:59.485Z"
+    "statusUpdatedAt": "2026-08-01T09:05:09.201Z"
+  },
+  {
+    "customer": {
+      "fullName": "SACHIN",
+      "email": "sachin@gmail.com",
+      "phone": "9876543210",
+      "address": "hada gali main baazar jagner",
+      "zipCode": "283115",
+      "country": "India"
+    },
+    "items": [
+      {
+        "id": 7,
+        "name": "Men's Jacket",
+        "price": 299,
+        "category": "men",
+        "images": [
+          "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800"
+        ],
+        "description": "Warm winter jacket",
+        "rating": 5,
+        "reviews": [],
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800",
+        "quantity": 2,
+        "selectedVariant": {
+          "Size": "S",
+          "Color": "Black",
+          "sku": "s-black",
+          "label": "Size: S | Color: Black"
+        },
+        "cartKey": "7-s-black"
+      }
+    ],
+    "total": 618,
+    "subtotal": 598,
+    "shippingCharge": 50,
+    "discountPercent": 5,
+    "discountAmount": 30,
+    "paymentMethod": "cod",
+    "userEmail": "sachin@gmail.com",
+    "userName": "sachin",
+    "createdAt": "2026-09-13T03:54:49.770Z",
+    "paymentStatus": "Pending",
+    "orderId": "ORD-1789271689786",
+    "orderDate": "2026-09-13T03:54:49.786Z",
+    "status": "Return Requested",
+    "statusUpdatedAt": "2026-09-13T04:01:37.015Z",
+    "returnReason": "Wrong item delivered",
+    "returnRequestedAt": "2026-09-13T04:01:37.015Z"
   }
 ]

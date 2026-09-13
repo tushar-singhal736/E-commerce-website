@@ -24,6 +24,8 @@ import Profile from './pages/Profile';
 import StaticPage from './pages/StaticPage';
 import './App.css';
 
+const scopedStorageKey = (name, email) => `${name}:${normalizeEmail(email) || 'guest'}`;
+
 function App() {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -49,6 +51,7 @@ function App() {
 
   const [toast, setToast] = useState(null);
   const isAdmin = user?.role === 'admin';
+  const accountKey = normalizeEmail(user?.email) || 'guest';
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -75,7 +78,7 @@ function App() {
       });
 
     setOrders(userOrders);
-    localStorage.setItem('orders', JSON.stringify(userOrders));
+    localStorage.setItem(scopedStorageKey('orders', currentUser.email), JSON.stringify(userOrders));
     return userOrders;
   }, [user]);
 
@@ -107,28 +110,38 @@ function App() {
 
   // localStorage se data load karo
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
+    const savedToken = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    let storedAccount = null;
+    try { storedAccount = savedUser ? JSON.parse(savedUser) : null; } catch { storedAccount = null; }
+    const initialEmail = storedAccount?.email || 'guest';
+    const savedCart = localStorage.getItem(scopedStorageKey('cart', initialEmail)) || localStorage.getItem('cart');
     if (savedCart) {
       try { setCart(JSON.parse(savedCart)); }
       catch { localStorage.removeItem('cart'); }
     }
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      try { setUser(JSON.parse(savedUser)); }
-      catch { localStorage.removeItem('user'); }
-    }
-    const savedToken = localStorage.getItem('token');
     if (savedToken) {
       setToken(savedToken);
+      if (savedUser) {
+        try { setUser(JSON.parse(savedUser)); }
+        catch { localStorage.removeItem('user'); }
+      }
+    } else {
+      localStorage.removeItem('user');
+      setUser(null);
     }
-    const savedWishlist = localStorage.getItem('wishlist');
+    if (savedToken && !savedUser) {
+      localStorage.removeItem('token');
+      setToken(null);
+    }
+    const savedWishlist = localStorage.getItem(scopedStorageKey('wishlist', initialEmail)) || localStorage.getItem('wishlist');
     if (savedWishlist) {
       try { setWishlist(JSON.parse(savedWishlist)); }
       catch { localStorage.removeItem('wishlist'); }
     }
     const savedStoreDiscount = localStorage.getItem('storeDiscountPercent');
     if (savedStoreDiscount) setStoreDiscountPercent(parseFloat(savedStoreDiscount));
-    const savedCoupon = localStorage.getItem('activeCoupon');
+    const savedCoupon = localStorage.getItem(scopedStorageKey('activeCoupon', initialEmail)) || localStorage.getItem('activeCoupon');
     if (savedCoupon) {
       try {
         const parsed = JSON.parse(savedCoupon);
@@ -201,13 +214,13 @@ function App() {
   }, [fetchUserOrders, user]);
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem(scopedStorageKey('cart', accountKey), JSON.stringify(cart));
     const auto = calculateAutoDiscount(cart);
     const effective = (Number(storeDiscountPercent) || 0) > 0
       ? Number(storeDiscountPercent)
       : Math.max(auto, Number(couponPercent) || 0);
     setDiscountPercent(effective);
-  }, [cart, storeDiscountPercent, couponPercent]);
+  }, [accountKey, cart, storeDiscountPercent, couponPercent]);
 
   useEffect(() => {
     const savedCoupon = localStorage.getItem('activeCoupon');
@@ -233,21 +246,21 @@ function App() {
         if (cancelled) return;
         setActiveCoupon('');
         setCouponPercent(0);
-        localStorage.removeItem('activeCoupon');
+        localStorage.removeItem(scopedStorageKey('activeCoupon', accountKey));
       }
     };
 
     revalidateSavedCoupon();
     return () => { cancelled = true; };
-  }, [cart]);
+  }, [accountKey, cart]);
 
   useEffect(() => {
     localStorage.setItem('storeDiscountPercent', storeDiscountPercent);
   }, [storeDiscountPercent]);
 
   useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
+    localStorage.setItem(scopedStorageKey('wishlist', accountKey), JSON.stringify(wishlist));
+  }, [accountKey, wishlist]);
 
   const addToCart = (product) => {
     const MAX_CART_QUANTITY = 10;
@@ -306,7 +319,7 @@ function App() {
 
   const clearCart = () => {
     setCart([]);
-    localStorage.removeItem('cart');
+    localStorage.removeItem(scopedStorageKey('cart', accountKey));
   };
 
   const updateQuantity = (id, qty) => {
@@ -338,13 +351,13 @@ function App() {
       const percent = Number(data.percent) || 0;
       setActiveCoupon(appliedCode);
       setCouponPercent(percent);
-      localStorage.setItem('activeCoupon', JSON.stringify({ code: appliedCode, percent }));
+      localStorage.setItem(scopedStorageKey('activeCoupon', accountKey), JSON.stringify({ code: appliedCode, percent }));
       setToast({ message: `${appliedCode} applied: ${percent}% off`, type: 'success' });
       return true;
     } catch (err) {
       setActiveCoupon('');
       setCouponPercent(0);
-      localStorage.removeItem('activeCoupon');
+      localStorage.removeItem(scopedStorageKey('activeCoupon', accountKey));
       setToast({ message: err.message || 'Invalid coupon code', type: 'error' });
       return false;
     }
@@ -353,7 +366,7 @@ function App() {
   const removeCoupon = () => {
     setActiveCoupon('');
     setCouponPercent(0);
-    localStorage.removeItem('activeCoupon');
+    localStorage.removeItem(scopedStorageKey('activeCoupon', accountKey));
   };
 
   const getCartCount = () => cart.reduce((total, item) => total + item.quantity, 0);
@@ -375,7 +388,7 @@ function App() {
     };
     const updatedOrders = [newOrder, ...orders];
     setOrders(updatedOrders);
-    localStorage.setItem('orders', JSON.stringify(updatedOrders));
+    localStorage.setItem(scopedStorageKey('orders', accountKey), JSON.stringify(updatedOrders));
     return newOrder.orderId;
   };
 
@@ -391,7 +404,7 @@ function App() {
         order.orderId === orderId ? { ...order, ...updatedOrder } : order
       );
       setOrders(updatedOrders);
-      localStorage.setItem('orders', JSON.stringify(updatedOrders));
+      localStorage.setItem(scopedStorageKey('orders', accountKey), JSON.stringify(updatedOrders));
       setToast({ message: 'Order cancelled successfully', type: 'success' });
       fetchUserOrders();
       return true;
@@ -414,7 +427,7 @@ function App() {
         order.orderId === orderId ? { ...order, ...updatedOrder } : order
       );
       setOrders(updatedOrders);
-      localStorage.setItem('orders', JSON.stringify(updatedOrders));
+      localStorage.setItem(scopedStorageKey('orders', accountKey), JSON.stringify(updatedOrders));
       setToast({ message: 'Return request submitted successfully', type: 'success' });
       fetchUserOrders();
       return true;
@@ -427,123 +440,157 @@ function App() {
 
   const handleLogin = (userData, authToken) => {
     const sanitized = sanitizeUser(userData);
+    const nextEmail = sanitized.email;
     setUser(sanitized);
     setToken(authToken || null);
+    try {
+      const savedCart = JSON.parse(localStorage.getItem(scopedStorageKey('cart', nextEmail)) || '[]');
+      const savedWishlist = JSON.parse(localStorage.getItem(scopedStorageKey('wishlist', nextEmail)) || '[]');
+      const savedCoupon = JSON.parse(localStorage.getItem(scopedStorageKey('activeCoupon', nextEmail)) || 'null');
+      setCart(Array.isArray(savedCart) ? savedCart : []);
+      setWishlist(Array.isArray(savedWishlist) ? savedWishlist : []);
+      setActiveCoupon(savedCoupon?.code || '');
+      setCouponPercent(Number(savedCoupon?.percent) || 0);
+    } catch {
+      setCart([]);
+      setWishlist([]);
+      setActiveCoupon('');
+      setCouponPercent(0);
+    }
     localStorage.setItem('user', JSON.stringify(sanitized));
     if (authToken) {
       localStorage.setItem('token', authToken);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      if (token) await apiFetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.warn('Logout session revoke failed:', err);
+    }
     setUser(null);
     setToken(null);
     setCart([]);
+    setWishlist([]);
+    setOrders([]);
+    setActiveCoupon('');
+    setCouponPercent(0);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem(scopedStorageKey('cart', accountKey));
+    localStorage.removeItem(scopedStorageKey('wishlist', accountKey));
+    localStorage.removeItem(scopedStorageKey('activeCoupon', accountKey));
+    localStorage.removeItem(scopedStorageKey('orders', accountKey));
     localStorage.removeItem('cart');
+    localStorage.removeItem('wishlist');
+    localStorage.removeItem('activeCoupon');
   };
 
   if (showSplash) return <Splash />;
 
   return (
     <Router>
-      <Navbar
-        cartCount={getCartCount()}
-        user={user}
-        isAdmin={isAdmin}
-        wishlistCount={wishlist.length}
-        theme={theme}
-        toggleTheme={toggleTheme}
-      />
-
-      {toast?.message && (
-        <div className={`app-toast app-toast--${toast.type || 'success'}`} role="status" aria-live="polite">
-          {toast.type === 'error'   && <span aria-label="error"   className="toast-icon">⚠️ </span>}
-          {toast.type === 'success' && <span aria-label="success" className="toast-icon">✅ </span>}
-          {toast.message}
-        </div>
-      )}
-
-      <Routes>
-        <Route path="/" element={<Home addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
-        <Route path="/login" element={<Login onLogin={handleLogin} setToast={setToast} />} />
-        <Route path="/products" element={<Products addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
-        <Route path="/products/:category" element={<Products addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
-        <Route path="/product/:id" element={<ProductDetail addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
-        <Route path="/wishlist" element={<Wishlist wishlist={wishlist} addToCart={addToCart} removeFromWishlist={removeFromWishlist} clearWishlist={() => setWishlist([])} />} />
-        <Route
-          path="/cart"
-          element={
-            <Cart
-              cart={cart}
-              removeFromCart={removeFromCart}
-              updateQuantity={updateQuantity}
-              discountPercent={discountPercent}
-              setDiscountPercent={setDiscountPercent}
-              addToCart={addToCart}
-              user={user}
-              wishlist={wishlist}
-              toggleWishlist={toggleWishlist}
-              isInWishlist={isInWishlist}
-              activeCoupon={activeCoupon}
-              applyCoupon={applyCoupon}
-              removeCoupon={removeCoupon}
-            />
-          }
+      <div className="App">
+        <Navbar
+          cartCount={getCartCount()}
+          user={user}
+          isAdmin={isAdmin}
+          wishlistCount={wishlist.length}
+          theme={theme}
+          toggleTheme={toggleTheme}
         />
-        <Route
-          path="/checkout"
-          element={
-            user
-              ? <Checkout
+
+        {toast?.message && (
+          <div className={`app-toast app-toast--${toast.type || 'success'}`} role="status" aria-live="polite">
+            {toast.type === 'error'   && <span aria-label="error"   className="toast-icon">⚠️ </span>}
+            {toast.type === 'success' && <span aria-label="success" className="toast-icon">✅ </span>}
+            {toast.message}
+          </div>
+        )}
+
+        <main className="content-area">
+          <Routes>
+            <Route path="/" element={<Home addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} setToast={setToast} />} />
+            <Route path="/products" element={<Products addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+            <Route path="/products/:category" element={<Products addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+            <Route path="/product/:id" element={<ProductDetail addToCart={addToCart} discountPercent={discountPercent} cart={cart} user={user} wishlist={wishlist} toggleWishlist={toggleWishlist} isInWishlist={isInWishlist} />} />
+            <Route path="/wishlist" element={<Wishlist wishlist={wishlist} addToCart={addToCart} removeFromWishlist={removeFromWishlist} clearWishlist={() => setWishlist([])} />} />
+            <Route
+              path="/cart"
+              element={
+                <Cart
                   cart={cart}
-                  clearCart={clearCart}
-                  addOrder={addOrder}
-                  user={user}
+                  removeFromCart={removeFromCart}
+                  updateQuantity={updateQuantity}
                   discountPercent={discountPercent}
-                  activeCoupon={activeCoupon}
                   couponPercent={couponPercent}
-                  storeDiscountPercent={storeDiscountPercent}
-                  darkMode={theme === 'dark'}
-                  setToast={setToast}
+                  addToCart={addToCart}
+                  user={user}
+                  wishlist={wishlist}
+                  toggleWishlist={toggleWishlist}
+                  isInWishlist={isInWishlist}
+                  activeCoupon={activeCoupon}
+                  applyCoupon={applyCoupon}
+                  removeCoupon={removeCoupon}
                 />
-              : <Navigate to="/login" state={{ from: '/checkout', message: 'Checkout karne ke liye pehle login karein.' }} replace />
-          }
-        />
-        <Route path="/order-success" element={user ? <OrderSuccess /> : <Navigate to="/login" replace />} />
-        <Route
-          path="/orders"
-          element={
-            user
-              ? <Orders orders={orders} returnOrder={returnOrder} cancelOrder={cancelOrder} setToast={setToast} />
-              : <Navigate to="/login" replace />
-          }
-        />
-        <Route path="/admin" element={<ProtectedAdminRoute user={user}><AdminPanel setToast={setToast} /></ProtectedAdminRoute>} />
-        <Route path="/admin/orders" element={<ProtectedAdminRoute user={user}><AdminOrders setToast={setToast} /></ProtectedAdminRoute>} />
-        <Route path="/admin/products" element={<ProtectedAdminRoute user={user}><AdminProducts setToast={setToast} /></ProtectedAdminRoute>} />
-        <Route
-          path="/profile"
-          element={
-            user
-              ? <Profile user={user} logout={handleLogout} setUser={setUser} setCartCount={setCart} setToast={setToast} />
-              : <Navigate to="/login" replace />
-          }
-        />
-        <Route path="/pages/:slug" element={<StaticPage />} />
-      </Routes>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                user
+                  ? <Checkout
+                      cart={cart}
+                      clearCart={clearCart}
+                      addOrder={addOrder}
+                      user={user}
+                      discountPercent={discountPercent}
+                      activeCoupon={activeCoupon}
+                      couponPercent={couponPercent}
+                      storeDiscountPercent={storeDiscountPercent}
+                      darkMode={theme === 'dark'}
+                      setToast={setToast}
+                    />
+                  : <Navigate to="/login" state={{ from: '/checkout', message: 'Checkout karne ke liye pehle login karein.' }} replace />
+              }
+            />
+            <Route path="/order-success" element={user ? <OrderSuccess /> : <Navigate to="/login" replace />} />
+            <Route
+              path="/orders"
+              element={
+                user
+                  ? <Orders orders={orders} returnOrder={returnOrder} cancelOrder={cancelOrder} setToast={setToast} />
+                  : <Navigate to="/login" replace />
+              }
+            />
+            <Route path="/admin" element={<ProtectedAdminRoute user={user}><AdminPanel setToast={setToast} /></ProtectedAdminRoute>} />
+            <Route path="/admin/orders" element={<ProtectedAdminRoute user={user}><AdminOrders setToast={setToast} /></ProtectedAdminRoute>} />
+            <Route path="/admin/products" element={<ProtectedAdminRoute user={user}><AdminProducts setToast={setToast} /></ProtectedAdminRoute>} />
+            <Route
+              path="/profile"
+              element={
+                user
+                  ? <Profile user={user} logout={handleLogout} setUser={setUser} setCartCount={setCart} setToast={setToast} />
+                  : <Navigate to="/login" replace />
+              }
+            />
+            <Route path="/pages/:slug" element={<StaticPage />} />
+          </Routes>
+        </main>
 
-      <Footer />
-      <Chatbot
-        cart={cart}
-        orders={orders}
-        user={user}
-        isAdmin={isAdmin}
-        discountPercent={discountPercent}
-        activeCoupon={activeCoupon}
-        wishlist={wishlist}
-      />
+        <Footer />
+        <Chatbot
+          cart={cart}
+          orders={orders}
+          user={user}
+          isAdmin={isAdmin}
+          discountPercent={discountPercent}
+          activeCoupon={activeCoupon}
+          wishlist={wishlist}
+        />
+      </div>
     </Router>
   );
 }

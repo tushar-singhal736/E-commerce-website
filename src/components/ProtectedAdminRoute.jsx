@@ -1,10 +1,12 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { getStoredAuthToken } from '../utils/api';
 
 function ProtectedAdminRoute({ user, children, requiredRole = 'admin' }) {
-  const isAdmin = user?.role === requiredRole;
+  const token = getStoredAuthToken();
+  const isAdmin = Boolean(token && user?.role === requiredRole);
 
-  if (!user) {
+  if (!user || !token) {
     return <Navigate to="/login" state={{ from: '/admin', message: 'Admin access requires login' }} replace />;
   }
 

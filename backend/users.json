@@ -42,5 +42,16 @@
     "passwordSalt": "e9eba507d168599032c0547f688355be",
     "role": "customer",
     "createdAt": "2026-06-18T07:03:38.580Z"
+  },
+  {
+    "id": "1789271554380",
+    "fullName": "sachin",
+    "email": "sachin@gmail.com",
+    "phone": "9876543210",
+    "dateOfBirth": "2004-10-12",
+    "passwordHash": "70b7f9538bcde413771223658953d0f334b931d246ccd06ee73a0c1d9d6e790f7ed628a8fcecbb52e17a224457e15dc3f71ef1a15193205c0c2346c67f196224",
+    "passwordSalt": "a8e6fc1946d40aa9d6960854be351bf5",
+    "role": "customer",
+    "createdAt": "2026-09-13T03:52:34.380Z"
   }
 ]

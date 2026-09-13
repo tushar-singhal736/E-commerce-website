@@ -7,11 +7,13 @@ import './Login.css';
 function Login({ onLogin, setToast }) {
   const [isSignup, setIsSignup] = useState(false);
   const [isReset, setIsReset] = useState(false);
+  const [resetStep, setResetStep] = useState('request');
   const [formData, setFormData] = useState({
     fullName: '',
     dateOfBirth: '',
     phone: '',
     email: '',
+    resetCode: '',
     password: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,18 +68,38 @@ function Login({ onLogin, setToast }) {
     const password = String(formData.password || '').trim();
 
     if (isReset) {
-      const { isValid, errors } = validateLoginData(email, password);
-      if (!isValid) {
-        showToast(Object.values(errors).join(', '), 'error');
+      if (!email) {
+        showToast('Please enter your email address.', 'error');
         return;
       }
       setIsSubmitting(true);
       try {
-        await callAuthApi('reset-password', { email, password });
-        showToast('Password reset successful. Please sign in.', 'success');
-        setIsReset(false);
-        setIsSignup(false);
-        setFormData({ fullName: '', dateOfBirth: '', phone: '', email: '', password: '' });
+        if (resetStep === 'request') {
+          const data = await callAuthApi('request-reset', { email });
+          setResetStep('verify');
+          if (data.developmentCode) {
+            setFormData((previous) => ({ ...previous, resetCode: data.developmentCode }));
+            showToast(`Development reset code: ${data.developmentCode}`, 'success');
+          } else {
+            showToast('Reset code email par bhej diya gaya hai.', 'success');
+          }
+        } else {
+          if (!/^\d{6}$/.test(formData.resetCode)) {
+            showToast('6-digit reset code enter karein.', 'error');
+            return;
+          }
+          const { isValid, errors } = validateLoginData(email, password);
+          if (!isValid) {
+            showToast(Object.values(errors).join(', '), 'error');
+            return;
+          }
+          await callAuthApi('reset-password', { email, resetCode: formData.resetCode, password });
+          showToast('Password reset successful. Please sign in.', 'success');
+          setIsReset(false);
+          setResetStep('request');
+          setIsSignup(false);
+          setFormData({ fullName: '', dateOfBirth: '', phone: '', email: '', resetCode: '', password: '' });
+        }
       } catch (err) {
         showToast(err.message, 'error');
       } finally {
@@ -157,12 +179,17 @@ function Login({ onLogin, setToast }) {
           )}
 
           <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required />
-          <input type="password" name="password" placeholder={isReset ? 'New Password' : 'Password'} value={formData.password} onChange={handleChange} required />
+          {isReset && resetStep === 'verify' && (
+            <input type="text" inputMode="numeric" maxLength={6} name="resetCode" placeholder="6-digit reset code" value={formData.resetCode} onChange={handleChange} required />
+          )}
+          {(!isReset || resetStep === 'verify') && (
+            <input type="password" name="password" placeholder={isReset ? 'New Password' : 'Password'} value={formData.password} onChange={handleChange} required />
+          )}
 
           <button type="submit" className="action-btn" disabled={isSubmitting}>
             {isSubmitting
               ? 'Please wait...'
-              : isReset ? 'Reset Password' : isSignup ? 'Create Account' : 'Sign In'}
+              : isReset ? resetStep === 'request' ? 'Send Reset Code' : 'Reset Password' : isSignup ? 'Create Account' : 'Sign In'}
           </button>
         </form>
 
@@ -172,10 +199,16 @@ function Login({ onLogin, setToast }) {
               Forgot password?
             </button>
           )}
+          {isReset && resetStep === 'verify' && (
+            <button type="button" className="forgot-btn" onClick={() => setResetStep('request')}>
+              Resend reset code
+            </button>
+          )}
           <p>
             {isReset ? 'Remember your password?' : isSignup ? "Already have an account?" : "Don't have an account?"}
             <span onClick={() => {
               setIsReset(false);
+              setResetStep('request');
               setIsSignup(!isSignup);
             }}>
               {isReset ? ' Login' : isSignup ? ' Login' : ' Signup'}

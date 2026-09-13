@@ -353,6 +353,65 @@
   gap:8px;
   padding-top:22px;
 }
+
+.admin-order-preview-card{
+  margin-bottom:12px;
+}
+
+.admin-order-preview-table-wrap{
+  overflow-x:auto;
+  margin-top:12px;
+}
+
+.admin-order-preview-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+.admin-order-preview-table th,
+.admin-order-preview-table td{
+  padding:10px 12px;
+  text-align:left;
+  border-bottom:1px solid rgba(226,232,240,.9);
+}
+[data-theme='dark'] .admin-order-preview-table th,
+[data-theme='dark'] .admin-order-preview-table td{
+  border-bottom-color:rgba(71,85,105,.75);
+}
+
+.admin-order-preview-table th{
+  font-size:12px;
+  font-weight:700;
+  color:#64748b;
+  text-transform:uppercase;
+}
+
+.admin-btn-secondary{
+  border:1px solid rgba(148,163,184,.6);
+  background:transparent;
+  color:#334155;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+}
+[data-theme='dark'] .admin-btn-secondary{
+  color:#e5e7eb;
+  border-color:rgba(100,116,139,.8);
+}
+
+.admin-card-footer{
+  margin-top:14px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+.admin-pill.pill-blue{
+  background: rgba(59,130,246,.12);
+  color:#2563eb;
+  border-color: rgba(59,130,246,.25);
+}
 .admin-field--checkbox input{
   width:auto;
 }

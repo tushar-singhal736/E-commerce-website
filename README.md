@@ -209,6 +209,9 @@ ECOMMERCE WEBSITE/
 - ✅ CORS Protection
 - ✅ XSS Protection (DOMPurify)
 - ✅ Security Headers (X-Frame-Options, CSP, etc.)
+- ✅ Authenticated checkout with server-side inventory pricing
+- ✅ Razorpay payment signature verification
+- ✅ Production admin credentials required through environment variables
 
 ## 🧪 API Endpoints
 
@@ -220,21 +223,22 @@ ECOMMERCE WEBSITE/
 - `DELETE /api/admin/products/:id` - Delete product (Admin)
 
 ### Cart
-- `POST /api/cart/add` - Add to cart
-- `DELETE /api/cart/remove/:id` - Remove from cart
-- `GET /api/cart` - Get cart items
+- Cart is maintained in the frontend local storage; checkout validates inventory on the server.
 
 ### Orders
-- `POST /api/orders/create` - Create order
-- `GET /api/orders` - Get user orders
-- `GET /api/admin/orders` - Get all orders (Admin)
-- `PUT /api/orders/:id/status` - Update order status (Admin)
+- `POST /api/create-order` - Create a Razorpay order (Authenticated)
+- `POST /api/orders` - Save a COD or verified online order (Authenticated)
+- `GET /api/orders` - Get the signed-in user's orders (Admin sees all)
+- `PUT /api/orders/:orderId/cancel` - Cancel an owned order (Authenticated)
+- `PUT /api/orders/:orderId/return` - Request a return for an owned delivered order (Authenticated)
+- `PUT /api/admin/orders/:orderId/status` - Update order status (Admin)
+- `GET /api/admin/stats` - Get dashboard statistics (Admin)
 
 ### Users
-- `POST /api/users/signup` - Register
-- `POST /api/users/login` - Login
-- `GET /api/users/profile` - Get profile
-- `PUT /api/users/profile` - Update profile
+- `POST /api/auth/signup` - Register
+- `POST /api/auth/login` - Login
+- `POST /api/auth/reset-password` - Change password using the current password
+- `GET /api/auth/me` - Validate the current session
 
 ### Settings
 - `GET /api/settings` - Get store settings
@@ -245,9 +249,9 @@ ECOMMERCE WEBSITE/
 Payment is processed through **Razorpay**:
 1. User completes checkout
 2. Razorpay payment modal opens
-3. Transaction verified on backend
-4. Order created in MongoDB
-5. Confirmation email sent
+3. Razorpay signature is verified on the backend
+4. Server recalculates item prices, discount, shipping, and total
+5. Order is stored in MongoDB or JSON fallback storage
 
 ## 🤖 Chatbot Features
 

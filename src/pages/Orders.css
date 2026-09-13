@@ -143,12 +143,42 @@
 .badge-return-requested { background: var(--blue-s); color: var(--blue-t); }
 .badge-out-for-delivery { background: var(--blue-s); color: var(--blue-t); }
 
+.order-details-panel {
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--border2);
+  background: var(--card);
+}
+
+.order-summary-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 12px;
+  padding: 18px 0 16px;
+}
+.order-meta-item {
+  background: var(--sub);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  padding: 12px 14px;
+}
+.order-meta-item span {
+  display: block;
+  font-size: 11px;
+  color: var(--t3);
+  margin-bottom: 6px;
+}
+.order-meta-item strong {
+  display: block;
+  font-size: 15px;
+  color: var(--t1);
+}
+
 .order-quick-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 0 20px 15px;
+  padding: 0 0 15px;
   background: var(--card);
   flex-wrap: wrap;
 }
@@ -290,6 +320,33 @@
 .ship-strip-free { background: var(--blue-s); color: var(--blue-t); }
 .ship-strip-paid { background: var(--sub); color: var(--t2); border: 1px solid var(--border2); }
 .ship-strip-paid strong { color: var(--t1); }
+
+.modal-note-group {
+  display: flex; flex-direction: column;
+  gap: 8px;
+  margin: 14px 0;
+}
+.modal-note-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t1);
+}
+.modal-note-group textarea {
+  width: 100%; min-height: 90px;
+  padding: 12px 14px;
+  border-radius: var(--r2);
+  border: 1px solid var(--border2);
+  background: var(--sub);
+  color: var(--t1);
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+.modal-note-group textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
 
 /* ═══════════════════════════════════════════
    ITEMS

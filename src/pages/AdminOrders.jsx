@@ -75,7 +75,11 @@ function AdminOrders({ setToast }) {
     totalOrders: orders.length,
     pendingOrders: orders.filter((o) => String(o.status || '').toLowerCase().includes('pending') || String(o.status || '').toLowerCase().includes('processing')).length,
     deliveredOrders: orders.filter((o) => String(o.status || '').toLowerCase().includes('delivered')).length,
-    revenue: orders.reduce((sum, order) => sum + (Number(order.total) || Number(order.summary?.totalPayable) || 0), 0)
+    revenue: orders.reduce((sum, order) => {
+      const status = String(order.status || '').toLowerCase();
+      if (['cancelled', 'returned', 'return requested', 'pending', 'pending - cash on delivery'].includes(status)) return sum;
+      return sum + (Number(order.total) || Number(order.summary?.totalPayable) || 0);
+    }, 0)
   };
 
   return (
@@ -187,7 +191,7 @@ function AdminOrders({ setToast }) {
                 </div>
                 <div className="admin-summary-row">
                   <span>Shipping</span>
-                  <span>₹{order.shipping || order.summary?.shipping || 0}</span>
+                  <span>₹{order.shippingCharge ?? order.shipping ?? order.summary?.shipping ?? 0}</span>
                 </div>
                 <div className="admin-summary-row total">
                   <span>Total</span>
@@ -230,6 +234,41 @@ function AdminOrders({ setToast }) {
                   onClick={() => updateOrderStatus(order.orderId, 'Return Requested')}
                 >
                   Return Requested
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Return Approved')}
+                >
+                  Approve Return
+                </button>
+                <button
+                  className="admin-btn admin-btn-outline"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Pickup Scheduled')}
+                >
+                  Schedule Pickup
+                </button>
+                <button
+                  className="admin-btn admin-btn-success"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Refund Initiated')}
+                >
+                  Initiate Refund
+                </button>
+                <button
+                  className="admin-btn admin-btn-success"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Refunded')}
+                >
+                  Mark Refunded
+                </button>
+                <button
+                  className="admin-btn admin-btn-danger"
+                  disabled={updatingId === order.orderId}
+                  onClick={() => updateOrderStatus(order.orderId, 'Return Rejected')}
+                >
+                  Reject Return
                 </button>
                 <button
                   className="admin-btn admin-btn-outline"

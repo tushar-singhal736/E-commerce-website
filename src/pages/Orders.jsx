@@ -136,6 +136,7 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
   const [modalStep, setModalStep] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [reason, setReason] = useState("");
+  const [returnNote, setReturnNote] = useState("");
 
   useEffect(() => {
     if (location.state?.openOrderId) setExpanded(location.state.openOrderId);
@@ -179,6 +180,11 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
     const normalizedStatus = String(order.status || "").trim().toLowerCase();
     if (normalizedStatus === "return requested") return "Return Requested";
     if (normalizedStatus === "returned") return "Returned";
+    if (normalizedStatus === "return approved") return "Return Approved";
+    if (normalizedStatus === "pickup scheduled") return "Pickup Scheduled";
+    if (normalizedStatus === "refund initiated") return "Refund Initiated";
+    if (normalizedStatus === "refunded") return "Refunded";
+    if (normalizedStatus === "return rejected") return "Return Rejected";
     if (["cancelled", "canceled"].includes(normalizedStatus)) return "Cancelled";
     if (["delivered"].includes(normalizedStatus)) return "Delivered";
     if (["out for delivery"].includes(normalizedStatus)) return "Out for Delivery";
@@ -208,13 +214,15 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
         text: "Order delivered ho chuka hai. Agar item damaged, wrong ya pasand nahi hai to return request raise karein.",
       };
     }
-    if (status === "Return Requested") {
+    if (["Return Requested", "Return Approved", "Pickup Scheduled", "Refund Initiated"].includes(status)) {
       return {
         tone: "return",
-        title: "Return request submitted",
-        text: "Pickup schedule hone ke baad refund quality check ke baad process hoga.",
+        title: status,
+        text: status === "Return Requested" ? "Return request review ke liye submit ho gayi hai." : "Return/refund process admin review me hai.",
       };
     }
+    if (status === "Refunded") return { tone: "return", title: "Refund completed", text: "Refund original payment method par process ho gaya hai." };
+    if (status === "Return Rejected") return { tone: "locked", title: "Return rejected", text: "Return request policy review ke baad reject hui hai." };
     if (status === "Returned") {
       return {
         tone: "return",
@@ -259,14 +267,31 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
   /* modal */
   const openModal = (e, order, type) => {
     e.stopPropagation();
-    setSelectedOrder(order); setModalType(type); setModalStep(1); setReason("");
+    setSelectedOrder(order);
+    setModalType(type);
+    setModalStep(1);
+    setReason("");
+    setReturnNote("");
   };
-  const closeModal = () => { setModalType(null); setReason(""); setSelectedOrder(null); setModalStep(1); };
-  const handleNext = () => { if (!reason) { showToast('Please select a reason.', 'error'); return; } setModalStep(2); };
+  const closeModal = () => {
+    setModalType(null);
+    setReason("");
+    setReturnNote("");
+    setSelectedOrder(null);
+    setModalStep(1);
+  };
+  const handleNext = () => {
+    if (!reason) {
+      showToast('Please select a reason.', 'error');
+      return;
+    }
+    setModalStep(2);
+  };
   const handleConfirm = async () => {
+    const fullReason = returnNote ? `${reason} - ${returnNote}` : reason;
     let ok = false;
-    if (modalType === "cancel") ok = await cancelOrder(selectedOrder.orderId, reason);
-    else ok = await returnOrder(selectedOrder.orderId, reason);
+    if (modalType === "cancel") ok = await cancelOrder(selectedOrder.orderId, fullReason);
+    else ok = await returnOrder(selectedOrder.orderId, fullReason);
     if (ok) setModalStep(3);
   };
 
@@ -283,13 +308,13 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
       ],
     };
 
-    if (status === "Returned" || status === "Return Requested") return {
+    if (["Returned", "Return Requested", "Return Approved", "Pickup Scheduled", "Refund Initiated", "Refunded"].includes(status)) return {
       label: "Return Status", variant: "blue",
       steps: [
         { key: "delivered",   icon: StepIcons.delivered,   label: "Delivered",          sub: "Successfully delivered",        state: "done" },
         { key: "returnInit",  icon: StepIcons.returnInit,  label: "Return Requested",   sub: order.returnReason || "Return requested", state: "done" },
-        { key: "pickup",      icon: StepIcons.pickup,      label: "Pickup Scheduled",   sub: "Agent will collect within 2 days", state: status === "Returned" ? "done" : "upcoming" },
-        { key: "refund",      icon: StepIcons.refund,      label: "Refund Processed",   sub: "After quality inspection",      state: status === "Returned" ? "done" : "upcoming" },
+        { key: "pickup",      icon: StepIcons.pickup,      label: "Pickup Scheduled",   sub: "Agent will collect within 2 days", state: ["Pickup Scheduled", "Refund Initiated", "Refunded", "Returned"].includes(status) ? "done" : "upcoming" },
+        { key: "refund",      icon: StepIcons.refund,      label: "Refund Processed",   sub: order.refundStatus || "After quality inspection", state: ["Refund Initiated", "Refunded"].includes(status) ? "done" : "upcoming" },
       ],
     };
 
@@ -612,43 +637,63 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
                 </div>
 
                 {/* ── EXPANDED ── */}
-                <div className="order-quick-actions">
-                  <div className={`order-action-hint hint-${actionHint.tone}`}>
-                    <strong>{actionHint.title}</strong>
-                    <span>{actionHint.text}</span>
-                  </div>
-                  <div className="action-area">
-                    <button className="btn-invoice" onClick={(e) => { e.stopPropagation(); downloadInvoice(order); }}>
-                      <IcoFile /> Invoice
-                    </button>
-                    {canCancelOrder(status) && (
-                      <button className="btn-danger" onClick={(e) => openModal(e, order, "cancel")}>
-                        <IcoX /> Cancel Order
-                      </button>
-                    )}
-                    {canReturnOrder(status) && (
-                      <button className="btn-return" onClick={(e) => openModal(e, order, "return")}>
-                        <IcoReturn /> Return Items
-                      </button>
-                    )}
-                  </div>
-                </div>
-
                 {isOpen && (
-                  <div className="order-details-content">
+                  <div className="order-details-panel">
+                    <div className="order-quick-actions">
+                      <div className={`order-action-hint hint-${actionHint.tone}`}>
+                        <strong>{actionHint.title}</strong>
+                        <span>{actionHint.text}</span>
+                      </div>
+                      <div className="action-area">
+                        <button className="btn-invoice" onClick={(e) => { e.stopPropagation(); downloadInvoice(order); }}>
+                          <IcoFile /> Invoice
+                        </button>
+                        {canCancelOrder(status) && (
+                          <button className="btn-danger" onClick={(e) => openModal(e, order, "cancel")}>
+                            <IcoX /> Cancel Order
+                          </button>
+                        )}
+                        {canReturnOrder(status) && (
+                          <button className="btn-return" onClick={(e) => openModal(e, order, "return")}>
+                            <IcoReturn /> Return Items
+                          </button>
+                        )}
+                      </div>
+                    </div>
 
-                    {/* ── TRACKING ── */}
-                    <div className={`tracking-wrap track-${track.variant}`}>
+                    <div className="order-summary-meta">
+                      <div className="order-meta-item">
+                        <span>Order Date</span>
+                        <strong>{fmtDate(order.orderDate)}</strong>
+                      </div>
+                      <div className="order-meta-item">
+                        <span>Item(s)</span>
+                        <strong>{order.items.length}</strong>
+                      </div>
+                      <div className="order-meta-item">
+                        <span>Order Total</span>
+                        <strong>&#8377;{orderTotal.toFixed(2)}</strong>
+                      </div>
+                    </div>
+
+                    <div className="tracking-wrap">
                       <div className="track-header">
                         <span className="track-title">{track.label}</span>
-                        {status === "Shipped" && (
-                          <span className="track-eta">
-                            <IcoTruck s={11} /> Expected in 3&#8211;4 days
-                          </span>
-                        )}
-                        {status === "Processing" && (
-                          <span className="track-eta">Order confirmed</span>
-                        )}
+                        <div className="track-meta">
+                          {status === "Shipped" && (
+                            <span className="track-eta">
+                              <IcoTruck s={11} /> Expected in 3&#8211;4 days
+                            </span>
+                          )}
+                          {status === "Out for Delivery" && (
+                            <span className="track-eta">
+                              <IcoTruck s={11} /> Out for delivery today
+                            </span>
+                          )}
+                          {status === "Processing" && (
+                            <span className="track-eta">Order confirmed</span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="track-timeline">
@@ -665,8 +710,7 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
                                     </svg>
                                   )}
                                   {step.state === "active" && <div className="tl-pulse" />}
-                                  {step.state === "idle" && <div className="tl-idle-dot" />}
-                                  {step.state === "upcoming" && <div className="tl-idle-dot" />}
+                                  {(step.state === "idle" || step.state === "upcoming") && <div className="tl-idle-dot" />}
                                 </div>
                                 {!last && <div className="tl-line" />}
                               </div>
@@ -682,7 +726,6 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
                         })}
                       </div>
 
-                      {/* Shipping info strip inside tracking */}
                       <div className={`ship-strip ${free ? "ship-strip-free" : "ship-strip-paid"}`}>
                         <IcoTruck s={12} />
                         {free
@@ -692,7 +735,6 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
                       </div>
                     </div>
 
-                    {/* ── ITEMS ── */}
                     <div className="items-list">
                       {order.items.map((item, idx) => {
                         const img = getOrderItemImage(item);
@@ -711,7 +753,6 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
                       })}
                     </div>
 
-                    {/* ── FOOTER ── */}
                     {status === "Delivered" && (
                       <div className="order-footer-grid">
                         <div className="feedback-box">
@@ -728,7 +769,6 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
                       </div>
                     )}
 
-                    {/* ── TOTALS ── */}
                     <div className="grand-total-row">
                       {order.discountPercent > 0 && (
                         <span className="discount-tag">
@@ -826,6 +866,17 @@ function Orders({ orders, returnOrder, cancelOrder, submitFeedback, setToast }) 
                     </div>
                   ))}
                 </div>
+                {modalType === "return" && (
+                  <div className="modal-note-group">
+                    <label htmlFor="return-note">Tell us more (optional)</label>
+                    <textarea
+                      id="return-note"
+                      value={returnNote}
+                      onChange={(e) => setReturnNote(e.target.value)}
+                      placeholder="Describe the issue or what you want returned"
+                    />
+                  </div>
+                )}
                 <div className={`refund-strip ${modalType === "return" ? "strip-blue" : "strip-green"}`}>
                   {modalType === "cancel"
                     ? "Refund credited to original payment method within 5-7 business days."

@@ -43,13 +43,14 @@ html, body {
   margin: 0 !important;
   padding: 0 !important;
   width: 100%;
-  height: 100%;
-  /* Navbar ke upar wali space ko khatam karne ke liye */
-  overflow-x: hidden; 
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
 #root {
-  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .App {
@@ -59,8 +60,6 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
-  /* Yeh line navbar ke upar ki space ko fix karegi */
-  vertical-align: baseline; 
 }
 
 /* 2. Beech ka content area (Jo navbar aur footer ko door rakhega) */
@@ -68,6 +67,23 @@ main, .content-area, .routes-wrapper {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
+}
+
+/* Navbar sticky fix */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+}
+
+/* Footer should always stay below content */
+.footer {
+  position: relative;
+}
+
+/* Fixed spacing to keep footer out of the page flow if nested incorrectly */
+body > #root > .App > .footer {
+  margin-top: auto;
 }
 
 /* 3. Navbar Fix (Taki upar koi gap na rahe) */

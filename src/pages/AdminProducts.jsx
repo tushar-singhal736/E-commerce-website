@@ -25,6 +25,20 @@ function AdminProducts({ setToast }) {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  const validateForm = () => {
+    const price = Number(form.price);
+    const stock = Number(form.stock);
+    if (!form.name.trim() || !form.category.trim()) {
+      showToast('Product name and category are required.', 'error');
+      return false;
+    }
+    if (!Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
+      showToast('Price must be non-negative and stock must be a non-negative integer.', 'error');
+      return false;
+    }
+    return true;
+  };
+
   const resetForm = () => {
     setForm({ name: '', price: '', category: '', stock: '', images: '', description: '' });
     setEditing(null);
@@ -50,6 +64,7 @@ function AdminProducts({ setToast }) {
   }, []);
 
   const submitEdit = async () => {
+    if (!validateForm()) return;
     setSaving(true);
     setMessage('');
     try {
@@ -82,6 +97,7 @@ function AdminProducts({ setToast }) {
   };
 
   const submitCreate = async () => {
+    if (!validateForm()) return;
     setSaving(true);
     setMessage('');
     try {
@@ -164,9 +180,9 @@ function AdminProducts({ setToast }) {
 
         <div className="admin-products-form-grid">
           <input name="name" placeholder="Product Name" value={form.name} onChange={handleChange} />
-          <input name="price" placeholder="Price" value={form.price} onChange={handleChange} />
+          <input name="price" type="number" min="0" step="0.01" placeholder="Price" value={form.price} onChange={handleChange} />
           <input name="category" placeholder="Category" value={form.category} onChange={handleChange} />
-          <input name="stock" placeholder="Stock" value={form.stock} onChange={handleChange} />
+          <input name="stock" type="number" min="0" step="1" placeholder="Stock" value={form.stock} onChange={handleChange} />
         </div>
         <input
           name="images"

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL, { parseApiResponse } from '../utils/api';
+import { apiFetch, parseApiResponse } from '../utils/api';
 import { getProductImage, handleImageFallback, PRODUCT_PLACEHOLDER } from '../utils/productImages';
-import { getStates, getCities, getCityData } from './locationData';
 import './Checkout.css';
 
 const Field = ({ name, label, placeholder, type = 'text', textarea = false,
@@ -13,6 +12,7 @@ const Field = ({ name, label, placeholder, type = 'text', textarea = false,
       <textarea
         id={name} name={name} value={value}
         placeholder={placeholder} onChange={onChange} onBlur={onBlur}
+        autoComplete="off"
       />
     ) : (
       <input
@@ -45,28 +45,25 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
     }
   }, [user, navigate]);
 
-  if (!user) return null;
-
   const [paymentMethod, setPaymentMethod] = useState('online');
   const [loading, setLoading]             = useState(false);
   const [touched, setTouched]             = useState({});
-  const [cityList, setCityList]           = useState([]);
   const [savedAddresses, setSavedAddresses] = useState([]);
-  const [saveAddress, setSaveAddress] = useState(true);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [addressTag, setAddressTag] = useState('Home');
+  const [locating, setLocating] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: user?.name || user?.displayName || '',
     email:    user?.email || '',
     phone:    user?.phone || '',
     address:  '',
-    city:     '',
-    state:    '',
     zipCode:  '',
     country:  'India',
   });
 
   const [errors, setErrors] = useState({});
-  const addressStorageKey = `addresses:${user.email}`;
+  const addressStorageKey = `addresses:${user?.email || 'guest'}`;
 
   useEffect(() => {
     const saved = localStorage.getItem(addressStorageKey);
@@ -76,33 +73,21 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
     }
   }, [addressStorageKey]);
 
+  // Auto-fill from the first saved address as soon as it loads, so the form
+  // AND the map are already populated with the person's existing address.
   useEffect(() => {
-    if (formData.state) {
-      const cities = getCities(formData.state);
-      setCityList(cities);
-      if (formData.city && !cities.includes(formData.city)) {
-        setFormData(prev => ({ ...prev, city: '', zipCode: '' }));
-      }
-      setErrors(prev => ({ ...prev, city: '', zipCode: '', address: '' }));
-    } else {
-      setCityList([]);
+    if (savedAddresses.length > 0 && !selectedAddressId) {
+      const first = savedAddresses[0];
+      setSelectedAddressId(first.id);
+      setFormData(prev => ({ ...prev, ...first }));
     }
-  }, [formData.state, formData.city]);
-
-  useEffect(() => {
-    if (formData.state && formData.city) {
-      const data = getCityData(formData.state, formData.city);
-      if (data) {
-        setFormData(prev => ({ ...prev, zipCode: data.pin, address: prev.address || '' }));
-        setErrors(prev => ({ ...prev, zipCode: '' }));
-      }
-    }
-  }, [formData.city]);
+  }, [savedAddresses, selectedAddressId]);
 
   const shipping       = 50;
   const subtotal       = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
   const finalTotal     = subtotal + shipping - discountAmount;
+  const totalItems     = cart.reduce((s, i) => s + i.quantity, 0);
 
   const validateField = (name, value) => {
     switch (name) {
@@ -119,12 +104,6 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
         return '';
       case 'address':
         if (value.trim().length < 10) return 'Enter complete address (min 10 chars)';
-        return '';
-      case 'city':
-        if (!value.trim()) return 'Select a city';
-        return '';
-      case 'state':
-        if (!value.trim()) return 'Select a state';
         return '';
       case 'zipCode':
         if (!/^[1-9][0-9]{5}$/.test(value)) return 'Enter a valid 6-digit PIN';
@@ -162,23 +141,32 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
     setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
   };
 
-  const applySavedAddress = (address) => {
-    setFormData((prev) => ({ ...prev, ...address }));
+  const selectSavedAddress = (address) => {
+    setSelectedAddressId(address.id);
+    setFormData(prev => ({ ...prev, ...address }));
     setTouched({});
     setErrors({});
   };
 
+  // Clears just the address fields so the person can type a fresh one,
+  // while the form/map stay visible in place (no hide/show toggling).
+  const startNewAddress = () => {
+    setSelectedAddressId(null);
+    setFormData(prev => ({ ...prev, address: '', zipCode: '' }));
+    setAddressTag('Home');
+    setTouched(prev => ({ ...prev, address: false, zipCode: false }));
+    setErrors(prev => ({ ...prev, address: undefined, zipCode: undefined }));
+  };
+
   const persistAddress = () => {
-    if (!saveAddress) return;
     const nextAddress = {
       id: Date.now(),
-      label: `${formData.fullName || 'Address'} - ${formData.city}`,
+      tag: addressTag,
+      label: `${formData.fullName || 'Address'} - ${formData.zipCode}`,
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.phone,
       address: formData.address,
-      city: formData.city,
-      state: formData.state,
       zipCode: formData.zipCode,
       country: formData.country,
     };
@@ -188,6 +176,65 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
     const updated = [nextAddress, ...withoutDuplicate].slice(0, 4);
     setSavedAddresses(updated);
     localStorage.setItem(addressStorageKey, JSON.stringify(updated));
+    return nextAddress;
+  };
+
+  // Save the currently-filled form as an address and mark it selected ("Deliver Here")
+  const handleSaveAddress = () => {
+    const fieldsToCheck = ['fullName', 'email', 'phone', 'address', 'zipCode'];
+    const newErrors = {};
+    fieldsToCheck.forEach((k) => {
+      const err = validateField(k, formData[k]);
+      if (err) newErrors[k] = err;
+    });
+    setErrors(prev => ({ ...prev, ...newErrors }));
+    setTouched(prev => ({ ...prev, fullName: true, email: true, phone: true, address: true, zipCode: true }));
+    if (Object.keys(newErrors).length) {
+      setToast?.({ message: 'Please complete the address fields', type: 'error' });
+      return;
+    }
+    const saved = persistAddress();
+    setSelectedAddressId(saved.id);
+    setToast?.({ message: 'Address saved', type: 'success' });
+  };
+
+  // "Use my current location" — Flipkart-style geolocation + reverse geocode (OpenStreetMap, no API key needed)
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setToast?.({ message: 'Geolocation is not supported by your browser', type: 'error' });
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await res.json();
+          const addr = data.address || {};
+          const line = [addr.house_number, addr.road, addr.suburb || addr.neighbourhood, addr.city || addr.town || addr.village]
+            .filter(Boolean)
+            .join(', ');
+          const pin = addr.postcode && /^\d{6}$/.test(addr.postcode) ? addr.postcode : '';
+          setFormData(prev => ({
+            ...prev,
+            address: line || prev.address,
+            zipCode: pin || prev.zipCode,
+          }));
+          setToast?.({ message: 'Location detected', type: 'success' });
+        } catch {
+          setToast?.({ message: 'Could not detect address. Please enter it manually.', type: 'error' });
+        } finally {
+          setLocating(false);
+        }
+      },
+      () => {
+        setLocating(false);
+        setToast?.({ message: 'Location permission denied. Please enter address manually.', type: 'error' });
+      }
+    );
   };
 
   const fp = (name) => ({
@@ -199,9 +246,25 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
     touched:  touched[name],
   });
 
+  // Debounce the address text before it drives the map, so the map only
+  // updates once the user pauses typing (real address), not on every keystroke.
+  const [debouncedAddress, setDebouncedAddress] = useState('');
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedAddress(formData.address), 600);
+    return () => clearTimeout(t);
+  }, [formData.address]);
+
+  const isMapStale  = debouncedAddress !== formData.address;
+  const hasMapAddress = debouncedAddress.trim().length > 4;
+  const mapQuery = hasMapAddress
+    ? encodeURIComponent([debouncedAddress, formData.zipCode, formData.country].filter(Boolean).join(', '))
+    : '';
+  const mapSrc = hasMapAddress
+    ? `https://maps.google.com/maps?q=${mapQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+    : '';
+
   // ── ORDER SUCCESS NAVIGATE — order data saath bhejo ──
   const goToSuccess = (savedOrder) => {
-    // Normalize order data taaki OrderSuccess aur Orders dono sahi dikhayein
     const normalized = {
       orderId:        savedOrder.orderId || savedOrder._id || `ORD-${Date.now()}`,
       orderDate:      savedOrder.createdAt || savedOrder.orderDate || new Date().toISOString(),
@@ -224,7 +287,6 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
     if (clearCart) clearCart();
     localStorage.removeItem('cart');
 
-    // ✅ Order data state mein bhejo navigate ke saath aur replace: true se history clean kro
     navigate('/order-success', { state: { order: normalized }, replace: true });
   };
 
@@ -235,6 +297,7 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
       setToast?.({ message: 'Please fix the errors above', type: 'error' });
       return;
     }
+    if (!selectedAddressId) persistAddress();
     if (cart.length === 0) {
       setToast?.({ message: 'Your cart is empty', type: 'error' });
       return;
@@ -258,10 +321,9 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
           ? { couponCode: activeCoupon, activeCoupon }
           : {}),
       };
-      persistAddress();
 
       if (paymentMethod === 'cod') {
-        const res = await fetch(`${API_BASE_URL}/api/orders`, {
+        const res = await apiFetch('/api/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...orderData, paymentStatus: 'Pending' }),
@@ -272,29 +334,38 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
         return;
       }
 
-      const orderRes = await fetch(`${API_BASE_URL}/api/create-order`, {
+      const orderRes = await apiFetch('/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: finalTotal }),
+        body: JSON.stringify({
+          items: cart,
+          couponCode: activeCoupon,
+        }),
       });
       const order = await parseApiResponse(orderRes);
       if (!order.id) throw new Error('Order creation failed');
+      const razorpayKey = order.keyId || process.env.REACT_APP_RAZORPAY_KEY_ID;
+      if (!razorpayKey || !window.Razorpay) {
+        throw new Error('Online payment is not configured. Please choose Cash on Delivery or contact support.');
+      }
 
       const options = {
-        key:         process.env.REACT_APP_RAZORPAY_KEY_ID,
+        key:         razorpayKey,
         amount:      order.amount,
         currency:    'INR',
         name:        'SuperNova Store',
         description: 'Payment for Order',
         order_id:    order.id,
         handler: async (response) => {
-          const saveRes = await fetch(`${API_BASE_URL}/api/orders`, {
+          const saveRes = await apiFetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               ...orderData,
               paymentStatus: 'Paid',
               paymentId: response.razorpay_payment_id,
+              paymentOrderId: response.razorpay_order_id,
+              paymentSignature: response.razorpay_signature,
             }),
           });
           try {
@@ -306,7 +377,7 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
           }
         },
         prefill: { name: formData.fullName, email: formData.email, contact: formData.phone },
-        theme: { color: '#c9541e' },
+        theme: { color: '#2874f0' },
       };
       new window.Razorpay(options).open();
 
@@ -318,7 +389,7 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
     }
   };
 
-  const states = getStates();
+  if (!user) return null;
 
   return (
     <div className={`co-page${darkMode ? ' co-dark' : ''}`}>
@@ -351,7 +422,10 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
             <form className="co-form" onSubmit={handleSubmit} noValidate>
 
               <section className="co-section">
-                <h2 className="co-section__title">Contact details</h2>
+                <div className="co-section__head">
+                  <span className="co-section__num">1</span>
+                  <h2 className="co-section__title">Contact Details</h2>
+                </div>
                 <Field {...fp('fullName')} label="Full name" placeholder="Enter Your Name" />
                 <div className="co-row">
                   <Field {...fp('email')} label="Email address" type="email" placeholder="Enter Email Id" />
@@ -360,97 +434,154 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
               </section>
 
               <section className="co-section">
-                <h2 className="co-section__title">Delivery address</h2>
+                <div className="co-section__head">
+                  <span className="co-section__num">2</span>
+                  <h2 className="co-section__title">Delivery Address</h2>
+                </div>
 
                 {savedAddresses.length > 0 && (
-                  <div className="co-address-book">
+                  <div className="co-address-list">
                     {savedAddresses.map((address) => (
-                      <button type="button" key={address.id} onClick={() => applySavedAddress(address)}>
-                        <strong>{address.label}</strong>
-                        <span>{address.address}, {address.city} - {address.zipCode}</span>
-                      </button>
+                      <label
+                        key={address.id}
+                        className={`co-address-card${selectedAddressId === address.id ? ' co-address-card--active' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="savedAddress"
+                          className="co-address-radio"
+                          checked={selectedAddressId === address.id}
+                          onChange={() => selectSavedAddress(address)}
+                        />
+                        <span className="co-address-check" aria-hidden="true" />
+                        <div className="co-address-card__body">
+                          <div className="co-address-card__top">
+                            <span className="co-address-tag">{(address.tag || 'HOME').toUpperCase()}</span>
+                            <strong>{address.fullName}</strong>
+                            <span className="co-address-phone">{address.phone}</span>
+                          </div>
+                          <p className="co-address-text">
+                            {address.address}, {address.zipCode}, {address.country}
+                          </p>
+                        </div>
+                      </label>
                     ))}
+                    <button
+                      type="button"
+                      className="co-add-address-btn"
+                      onClick={startNewAddress}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14"/>
+                      </svg>
+                      Add New Address
+                    </button>
                   </div>
                 )}
 
-                <div className={`co-field${errors.state && touched.state ? ' co-field--error' : ''}`}>
-                  <label htmlFor="state">State</label>
-                  <select id="state" name="state" value={formData.state} onChange={handleChange} onBlur={handleBlur}>
-                    <option value="">Select your state</option>
-                    {states.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  {errors.state && touched.state && (
-                    <span className="co-error" role="alert">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                        <circle cx="6" cy="6" r="5.5" stroke="currentColor"/>
-                        <path d="M6 4v2.5M6 8v.5" stroke="currentColor" strokeLinecap="round"/>
-                      </svg>
-                      {errors.state}
-                    </span>
-                  )}
-                </div>
-
-                <div className={`co-field${errors.city && touched.city ? ' co-field--error' : ''}`}>
-                  <label htmlFor="city">
-                    City
-                    {!formData.state && <span className="co-field__hint"> — select state first</span>}
-                  </label>
-                  <select id="city" name="city" value={formData.city}
-                    onChange={handleChange} onBlur={handleBlur} disabled={!formData.state}>
-                    <option value="">
-                      {formData.state ? `Select city in ${formData.state}` : 'Select state first'}
-                    </option>
-                    {cityList.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                  {errors.city && touched.city && (
-                    <span className="co-error" role="alert">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                        <circle cx="6" cy="6" r="5.5" stroke="currentColor"/>
-                        <path d="M6 4v2.5M6 8v.5" stroke="currentColor" strokeLinecap="round"/>
-                      </svg>
-                      {errors.city}
-                    </span>
-                  )}
-                </div>
-
-                <Field {...fp('address')} label="Street address" textarea
-                  placeholder={formData.city ? `House no., street, area — ${formData.city}` : 'House no., street name, area…'}
-                />
-
-                <div className="co-row">
-                  <div className={`co-field${errors.zipCode && touched.zipCode ? ' co-field--error' : ''}`}>
-                    <label htmlFor="zipCode">
-                      PIN code
-                      {formData.city && formData.zipCode && <span className="co-pin-badge">auto-filled</span>}
-                    </label>
-                    <input id="zipCode" name="zipCode" type="text"
-                      value={formData.zipCode} placeholder="6-digit PIN"
-                      onChange={handleChange} onBlur={handleBlur} maxLength={6}
-                    />
-                    {errors.zipCode && touched.zipCode && (
-                      <span className="co-error" role="alert">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                          <circle cx="6" cy="6" r="5.5" stroke="currentColor"/>
-                          <path d="M6 4v2.5M6 8v.5" stroke="currentColor" strokeLinecap="round"/>
-                        </svg>
-                        {errors.zipCode}
-                      </span>
+                <div className="co-address-form-block">
+                    {selectedAddressId && (
+                      <p className="co-address-form-hint">Editing: <strong>{(addressTag || 'Home')}</strong> address — changes update the address above.</p>
                     )}
-                  </div>
-                  <div className="co-field">
-                    <label>Country</label>
-                    <input value="India" readOnly />
-                  </div>
-                </div>
+                    <Field {...fp('address')} label="Street address" textarea
+                      placeholder="House no., building, street, area, landmark…"
+                    />
 
-                <label className="co-save-address">
-                  <input type="checkbox" checked={saveAddress} onChange={(event) => setSaveAddress(event.target.checked)} />
-                  Save this address for future orders
-                </label>
+                    <button
+                      type="button"
+                      className="co-locate-btn"
+                      onClick={useCurrentLocation}
+                      disabled={locating}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                      </svg>
+                      {locating ? 'Detecting your location…' : 'Use my current location'}
+                    </button>
+
+                    <div className="co-address-map">
+                      {hasMapAddress ? (
+                        <>
+                          <iframe
+                            title="Delivery address map"
+                            src={mapSrc}
+                            loading="lazy"
+                            allowFullScreen
+                            referrerPolicy="no-referrer-when-downgrade"
+                          />
+                          {isMapStale && <span className="co-map-updating">Updating map…</span>}
+                        </>
+                      ) : (
+                        <div className="co-map-placeholder">
+                          <p>Type your delivery address and the map will update automatically.</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="co-row">
+                      <div className={`co-field${errors.zipCode && touched.zipCode ? ' co-field--error' : ''}`}>
+                        <label htmlFor="zipCode">
+                          PIN code
+                          {formData.zipCode && <span className="co-pin-badge">auto-filled</span>}
+                        </label>
+                        <input id="zipCode" name="zipCode" type="text"
+                          value={formData.zipCode} placeholder="6-digit PIN"
+                          onChange={handleChange} onBlur={handleBlur} maxLength={6}
+                        />
+                        {errors.zipCode && touched.zipCode && (
+                          <span className="co-error" role="alert">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                              <circle cx="6" cy="6" r="5.5" stroke="currentColor"/>
+                              <path d="M6 4v2.5M6 8v.5" stroke="currentColor" strokeLinecap="round"/>
+                            </svg>
+                            {errors.zipCode}
+                          </span>
+                        )}
+                      </div>
+                      <div className="co-field">
+                        <label>Country</label>
+                        <input value="India" readOnly />
+                      </div>
+                    </div>
+
+                    <div className="co-field">
+                      <label>Address type</label>
+                      <div className="co-tag-choices">
+                        {['Home', 'Work'].map((t) => (
+                          <button
+                            type="button"
+                            key={t}
+                            className={`co-tag-choice${addressTag === t ? ' co-tag-choice--active' : ''}`}
+                            onClick={() => setAddressTag(t)}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="co-address-form-actions">
+                      <button type="button" className="co-btn co-btn--deliver" onClick={handleSaveAddress}>
+                        Save &amp; Deliver Here
+                      </button>
+                      {savedAddresses.length > 0 && !selectedAddressId && (
+                        <button
+                          type="button"
+                          className="co-btn-text"
+                          onClick={() => selectSavedAddress(savedAddresses[0])}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                </div>
               </section>
 
               <section className="co-section">
-                <h2 className="co-section__title">Payment method</h2>
+                <div className="co-section__head">
+                  <span className="co-section__num">3</span>
+                  <h2 className="co-section__title">Payment Options</h2>
+                </div>
                 <div className="co-pay-options">
 
                   <label className={`co-pay-option${paymentMethod === 'online' ? ' co-pay-option--active' : ''}`}>
@@ -458,13 +589,46 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
                       checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')}
                       className="co-pay-radio" />
                     <span className="co-pay-icon" aria-hidden="true">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h.01M9 15h.01M15 9h6M15 15h6M4 12h16" opacity="0"/>
+                        <path d="M8 5v4M16 5v4"/>
+                      </svg>
+                    </span>
+                    <span className="co-pay-text">
+                      <span className="co-pay-name">UPI</span>
+                      <span className="co-pay-desc">Pay via any UPI app — GPay, PhonePe, Paytm</span>
+                    </span>
+                    <span className="co-pay-check" aria-hidden="true" />
+                  </label>
+
+                  <label className={`co-pay-option${paymentMethod === 'online' ? ' co-pay-option--active' : ''}`}>
+                    <input type="radio" name="paymentMethod" value="online"
+                      checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')}
+                      className="co-pay-radio" />
+                    <span className="co-pay-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                         <rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>
                       </svg>
                     </span>
                     <span className="co-pay-text">
-                      <span className="co-pay-name">Online payment</span>
-                      <span className="co-pay-desc">UPI, cards, net banking via Razorpay</span>
+                      <span className="co-pay-name">Credit / Debit Card</span>
+                      <span className="co-pay-desc">Visa, Mastercard, RuPay &amp; more</span>
+                    </span>
+                    <span className="co-pay-check" aria-hidden="true" />
+                  </label>
+
+                  <label className={`co-pay-option${paymentMethod === 'online' ? ' co-pay-option--active' : ''}`}>
+                    <input type="radio" name="paymentMethod" value="online"
+                      checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')}
+                      className="co-pay-radio" />
+                    <span className="co-pay-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 21h18M4 21V9l8-6 8 6v12M9 21v-6h6v6"/>
+                      </svg>
+                    </span>
+                    <span className="co-pay-text">
+                      <span className="co-pay-name">Net Banking</span>
+                      <span className="co-pay-desc">All major Indian banks supported</span>
                     </span>
                     <span className="co-pay-check" aria-hidden="true" />
                   </label>
@@ -474,12 +638,12 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
                       checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')}
                       className="co-pay-radio" />
                     <span className="co-pay-icon" aria-hidden="true">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 11l19-9-9 19-2-8-8-2z"/>
                       </svg>
                     </span>
                     <span className="co-pay-text">
-                      <span className="co-pay-name">Cash on delivery</span>
+                      <span className="co-pay-name">Cash on Delivery</span>
                       <span className="co-pay-desc">Pay when your order arrives at the door</span>
                     </span>
                     <span className="co-pay-check" aria-hidden="true" />
@@ -487,17 +651,14 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
 
                 </div>
 
-                <button type="submit" className="co-btn" disabled={loading} aria-live="polite">
+                <button type="submit" className="co-btn co-btn--place" disabled={loading} aria-live="polite">
                   {loading ? (
                     <><span className="co-btn__spinner" aria-hidden="true" />Processing…</>
                   ) : (
                     <>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                      </svg>
                       {paymentMethod === 'online'
-                        ? `Pay ₹${finalTotal.toLocaleString('en-IN')}`
-                        : `Place order · ₹${finalTotal.toLocaleString('en-IN')}`}
+                        ? `PAY ₹${finalTotal.toLocaleString('en-IN')}`
+                        : `PLACE ORDER · ₹${finalTotal.toLocaleString('en-IN')}`}
                     </>
                   )}
                 </button>
@@ -506,7 +667,7 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   </svg>
-                  256-bit SSL encrypted checkout
+                  Safe and Secure Payments. 100% Authentic products.
                 </p>
               </section>
 
@@ -515,7 +676,7 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
 
           <aside className="co-aside">
             <div className="co-summary">
-              <h2 className="co-summary__title">Order summary</h2>
+              <h2 className="co-summary__title">PRICE DETAILS</h2>
               <div className="co-items">
                 {cart.length === 0 ? (
                   <p className="co-empty">Your cart is empty.</p>
@@ -546,38 +707,32 @@ function Checkout({ cart = [], clearCart, user, addOrder, discountPercent = 0, a
 
               <div className="co-price-list">
                 <div className="co-price-row">
-                  <span>Subtotal</span>
+                  <span>Price ({totalItems} {totalItems === 1 ? 'item' : 'items'})</span>
                   <span>₹{subtotal.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="co-price-row">
-                  <span>Shipping</span>
-                  <span className="co-free">{shipping === 0 ? 'Free' : `₹${shipping}`}</span>
                 </div>
                 {discountPercent > 0 && (
                   <div className="co-price-row co-price-row--discount">
                     <span>Discount ({discountPercent}%)</span>
-                    <span>−₹{discountAmount.toLocaleString('en-IN')}</span>
+                    <span>− ₹{discountAmount.toLocaleString('en-IN')}</span>
                   </div>
                 )}
+                <div className="co-price-row">
+                  <span>Delivery Charges</span>
+                  <span className="co-free">{shipping === 0 ? 'Free' : `₹${shipping}`}</span>
+                </div>
               </div>
 
               <div className="co-total">
-                <span>Total</span>
+                <span>Total Amount</span>
                 <span className="co-total__val">₹{finalTotal.toLocaleString('en-IN')}</span>
               </div>
-            </div>
 
-            {formData.city && formData.state && (
-              <div className="co-location-card">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                </svg>
-                <div>
-                  <p className="co-location-card__title">Delivering to</p>
-                  <p className="co-location-card__val">{formData.city}, {formData.state} — {formData.zipCode}</p>
-                </div>
-              </div>
-            )}
+              {discountAmount > 0 && (
+                <p className="co-savings-banner">
+                  You will save ₹{discountAmount.toLocaleString('en-IN')} on this order
+                </p>
+              )}
+            </div>
 
             <div className="co-info-cards">
               <div className="co-info-card">
